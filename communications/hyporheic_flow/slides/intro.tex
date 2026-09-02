@@ -1,0 +1,35 @@
+\section{Introduction}
+
+\begin{frame}{Flow resistance}
+    \begin{columns}
+        \column{0.5\linewidth}
+        \begin{figure}
+            \includesvg[width=\linewidth]{media/channel.svg}
+        \end{figure}
+        \column{0.5\linewidth}
+            According to the (Gauckler-)Manning(-Strickler) formula, the bed's shear resistance is :
+            $$\tau_p = \frac{\varrho g}{K^2}\frac{\bar{u}^2}{h^{1/3}}$$
+            \begin{itemize}
+                \item $\varrho$ : the fluid's density,
+                \item $g$ : the gravitational acceleration,
+                \item $K$ : a calibrated coefficient (depends on roughness),
+                \item $\bar u$ : the mean flow speed and
+                \item $h$ : the flow depth.
+            \end{itemize}
+    \end{columns}
+    
+    \anonymousfootnote{\cite{Gauckler}}
+\end{frame}
+
+\begin{frame}{(Gauckler-)Manning(-Strickler)'s validity domain}
+
+    \begin{figure}
+        \input{slides/darcy_plot.tex}
+        \label{fig:noise}
+    \end{figure}
+
+    \anonymousfootnote{\cite{Recking2008eq}}
+    \anonymousfootnote{\cite{ferguson-recking}}
+    \anonymousfootnote{\cite{Chen2020}}
+\end{frame}
+

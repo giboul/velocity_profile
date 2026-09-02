@@ -1,0 +1,42 @@
+% !TeX program = xelatex
+% !TeX outdir = _latex
+\documentclass[logofile=media/lhe_logo.png,11pt,dvipsnames]{beamer}
+
+\PassOptionsToPackage{french}{babel}
+\PassOptionsToPackage{locale=FR}{siunitx}
+\usepackage[
+  %dark
+]{LHE-beamer}
+
+\addbibresource{References.bib}
+
+\title{Hyporheic flow and velocity distribution}
+\author{Axel Giboulot\\{\small Supervised by Christophe Ancey}}
+\institute{École Polytechnique Fédérale de Lausanne}
+\date{\today}
+
+\newcommand{\savg}[1]{\langle #1\rangle}
+\newcommand{\tavg}[1]{\overline{#1}}
+\newcommand{\avg}[1]{\savg{\tavg{#1}}}
+
+\begin{document}
+
+\begin{frame}
+  \begin{center}
+    \begin{tikzpicture}
+      \node[anchor=center] at (0.5\linewidth,-4) {\includegraphics[width=0.4\linewidth]{media/lhe_logo.png}};
+    \end{tikzpicture}
+  \end{center}
+  \titlepage
+\end{frame}
+
+\input{slides/intro.tex}
+\input{slides/porosity.tex}
+\input{slides/averaging.tex}
+\input{slides/expansions.tex}
+\input{slides/conclusion.tex}
+
+% \input{slides/appendix.tex}
+\input{slides/biblio.tex}
+
+\end{document}

@@ -1,0 +1,31 @@
+\section{Asymptotic expansions}
+
+\begin{frame}{Differential equation to solve}
+    % $$0 = \epsilon \varrho g i + \frac{\mathrm d(\tau_v + \tau_t + \tau_d)}{\mathrm dz} + \epsilon f - \mu \frac{\mathrm d\epsilon}{\mathrm dz}\frac{\mathrm d u}{\mathrm dz}$$
+    $$0 = \epsilon \varrho g i + (\tau_v + \tau_t + \tau_d)' + \epsilon f - \mu u'\epsilon'$$
+
+    \begin{center}
+        \color{gray}
+        $$\text{With closures for $\tau_t$, $\tau_d$ and $f$ : }\begin{cases}
+            \tau_t = \varrho \epsilon\kappa^2 Z_{LS}^2 \left(1-e^{-\sqrt{\frac{Z_{LS}u}{\nu A_\ast^2}}}\right)^2 u'^2,\\
+            \tau_d = \varrho \epsilon\lambda d_p \frac{1-\epsilon}{1-\epsilon_b} u u',\\
+            f = -\varrho\nu A_E\left(\frac{1-\epsilon}{\epsilon d_p}\right)^2 u ~- \varrho B_E\frac{1-\epsilon}{d_p}u^2.
+        \end{cases}$$
+    \end{center}
+
+    % $$0 = c_0 + c_1 \frac{\mathrm du}{\mathrm dz} + c_2 \left(\frac{\mathrm du}{\mathrm dz}\right)^2 + c_3 \left(\frac{\mathrm du}{\mathrm dz}\right)^3 + c_4 \frac{\mathrm d^2 u}{\mathrm dz^2} + c_5 \frac{\mathrm du}{\mathrm dz} \frac{\mathrm d^2 u}{\mathrm dz^2}$$
+    % $$0 = c_0 + c_1 u' + c_2 u'^2 + c_3 u'^3 + c_4 u' u'' + c_5 u''$$
+    $$\Rightarrow 0 = \rlap{$\underbrace{c_0 + c_1 u' + c_2 u'^2 + c_3 u'^3 + c_4 u' u''}_{\text{Trinomial of }u'}$} c_0 + c_1 u' + c_2 u'^2 + c_3 u'^3 + \overbrace{c_4 u' u'' + c_5 u''}^{\text{Affine of }u''}$$
+    $$c_i=c_i\left(z~,u\right)$$
+    % $$c_i=c_i\left(z~,u~,\epsilon\right)\quad\&\quad (\cdot)'\doteq\frac{\mathrm d(\cdot)}{\mathrm d z}$$
+\end{frame}
+
+\begin{frame}{Approximate analytical solution}{Asymptotic expansions}
+
+    $$u_i = u_i^{(0)} + \alpha_i u_i^{(1)} + \mathcal O(\alpha_i^2)$$
+
+    \begin{figure}
+        \centering
+        \includesvg[width=0.6\linewidth]{media/expansions.svg}
+    \end{figure}
+\end{frame}

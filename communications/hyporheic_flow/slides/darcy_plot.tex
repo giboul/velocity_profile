@@ -1,0 +1,26 @@
+\begin{tikzpicture}
+    \begin{loglogaxis}[scale=0.5,
+                        table/col sep=comma,
+                        width=0.85\linewidth,
+                        height=0.6\linewidth,
+                        xlabel={Relative submergence $\xi = h/d_p$},
+                        ylabel={Darcy-Weisbach friction factor $f$},
+                        mark size=1.5pt,
+                        xmin=4e-1, xmax=1e2,
+                        ymin=2e-2, ymax=4e1,
+                        line width=1pt,
+                        unbounded coords=jump,
+                        legend style={fill=normal bg,draw=black},
+                        legend cell align={left}]
+
+        \addplot[toraval] table[x=xi,y=Keulegan]{media/darcy_double_average.csv};\addlegendentry{Keulegan}
+        \addplot[normal fg, dashed] table[x=xi,y=Recking]{media/darcy_double_average.csv};\addlegendentry{Recking}
+        \addplot[toravalr] table[x=xi,y=Manning]{media/darcy_double_average.csv};\addlegendentry{Manning}
+        \addplot[normal fg] table[x=xi,y=Ferguson]{media/darcy_double_average.csv};\addlegendentry{Ferguson}
+        \addplot[normal fg, only marks, mark=o, mark size=0.5pt, line width=0.5pt, draw opacity=0.5] table[x=xi,y=f]{media/Chen2020.csv};\addlegendentry{Chen (2020)}
+        % \addplot[toravalr, only marks, mark=diamond, line width=0.75pt] table[x=xi,y=f]{media/Recking2008.csv};\addlegendentry{\citeauthor{Recking2008exp}}
+        % \addplot[toraval,only marks, mark=asterisk, line width=0.5pt] table[x=x,y=y]{media/armfield.csv};\addlegendentry{Armfield flume}
+        \addplot[red, line width=1pt] table[x=xi,y=f]{media/darcy_double_average.csv};\addlegendentry{$\lambda=0.1$}
+
+    \end{loglogaxis}
+\end{tikzpicture}

@@ -1,0 +1,32 @@
+\appendix
+
+\section{Darcy-Weisbach coefficient}
+
+\begin{frame}{(Gauckler-)Manning-Strickler's validity domain}
+
+    \begin{figure}
+        \begin{tikzpicture}
+            \begin{loglogaxis}[table/col sep=comma,
+                                width=0.85\linewidth,
+                                height=0.6\linewidth,
+                                xlabel={Relative submergence $\xi = h/d_p$},
+                                ylabel={Darcy-Weisbach friction factor $f$},
+                                mark size=1.5pt,
+                                xmin=1.2e-1, xmax=2e3,
+                                ymin=1e-2, ymax=1e3,
+                                line width=1pt,
+                                unbounded coords=jump]
+
+                \addplot[gray] table[x=xi,y=strickler]{media/darcy_laws.csv};\addlegendentry{Strickler (1867)}
+                % \addplot[epfl, dashed] table[x=xi,y=keulegan]{media/darcy_laws.csv};\addlegendentry{Keulegan (1938)}
+                \addplot[toravalr] table[x=xi,y=recking]{media/darcy_laws.csv};\addlegendentry{Recking (2008)}
+                \addplot[toraval,only marks, mark=asterisk, line width=0.5pt] table[x=x,y=y]{media/armfield.csv};\addlegendentry{Armfield}
+                \addplot[black, only marks, mark=o, mark size=0.5pt, line width=0.5pt, draw opacity=0.5] table[x=Rivers_f_x,y=Rivers_f_y]{media/darcy_data.csv};\addlegendentry{Terrain}
+                % \only<3>{\addplot[green,only marks] table[x=Planar_x,y=Planar_y]{media/darcy.csv}};\addlegendentry{Case 1}
+                \addplot[toravalr, only marks, mark=diamond, line width=0.75pt] table[x=Lochsa_f_x,y=Lochsa_f_y]{media/darcy_Lochsa.csv};\addlegendentry{Lochsa}
+
+            \end{loglogaxis}
+        \end{tikzpicture}
+    \end{figure}
+
+\end{frame}

@@ -1,0 +1,103 @@
+\newbool{dark}
+\DeclareOption{dark}{\booltrue{dark}}
+\ProcessOptions\relax
+
+\definecolor{toraval}{RGB}{2,129,182}
+\definecolor{toravalr}{RGB}{253,126,73}
+\definecolor{epfl}{RGB}{255,0,0}
+
+%\usepackage{worldflags}
+\usepackage[justification=centering]{caption}
+\usepackage[justification=centering]{subcaption}
+\usepackage[inkscapelatex=true,inkscapearea=page]{svg}
+\usepackage{tikz,pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{enumitem}
+
+\usepackage{fontspec}
+\defaultfontfeatures{Mapping=tex-text}
+\setromanfont{Linux Libertine O}
+\usepackage[libertine]{newtxmath}
+\usefonttheme{serif}
+\usepackage[english]{babel}
+
+\usepackage{csquotes}
+
+\usepackage[detect-all,per-mode=symbol]{siunitx}
+
+\usepackage{hyperref}
+
+\usepackage[
+  style=authortitle,
+  backend=bibtex,
+  natbib=true,
+  url=false,
+  eprint=false
+]{biblatex}
+\AtBeginBibliography{\scriptsize}
+
+\newcommand{\anonymousfootnote}[1]{
+    \let\thefootnote\relax%
+    \footnotetext{#1}
+}
+
+\setlist[1]{label=\color{toraval}$\bullet$}
+\setlist[2]{label=\color{toraval}$\circ$}
+\setlist[3]{label=\color{toraval}$\triangleright$}
+
+
+
+\mode<presentation>{
+  \usetheme{Singapore}
+
+  \ifbool{dark}{
+    \definecolor{normal fg}{named}{Goldenrod}
+    \definecolor{primary fg}{named}{white}
+    \definecolor{secondary fg}{named}{black}
+    \definecolor{tertiary fg}{named}{black}
+    \definecolor{quaternary fg}{named}{black}
+
+    \definecolor{normal bg}{named}{black}
+    \definecolor{primary bg}{named}{black}
+    \definecolor{secondary bg}{named}{Goldenrod}
+    \definecolor{tertiary bg}{named}{Goldenrod}
+    \definecolor{quaternary bg}{named}{Goldenrod}
+  }{
+    \definecolor{normal fg}{named}{black}
+    \definecolor{primary fg}{named}{gray}
+    \definecolor{secondary fg}{named}{white}
+    \definecolor{tertiary fg}{named}{white}
+    \definecolor{quaternary fg}{named}{white}
+
+    \definecolor{normal bg}{named}{white}
+    \definecolor{primary bg}{named}{white}
+    \definecolor{secondary bg}{named}{toraval}
+    \definecolor{tertiary bg}{named}{toraval}
+    \definecolor{quaternary bg}{named}{toraval}
+  }
+
+  \setbeamercolor{normal text}{use=normal,fg=normal fg,bg=normal bg}
+
+  \setbeamercolor{structure}{fg=primary bg}
+  \setbeamercolor{section in head/foot}{fg=secondary bg}
+
+  \setbeamercolor{palette primary}{use=structure,    fg=primary fg,    bg=primary bg}
+  \setbeamercolor{palette secondary}{use=structure,  fg=secondary fg,  bg=secondary bg}
+  \setbeamercolor{palette tertiary}{use=structure,   fg=tertiary fg,   bg=tertiary bg}
+  \setbeamercolor{palette quaternary}{use=structure, fg=quaternary fg, bg=quaternary bg}
+
+  \setbeamercolor*{titlelike}{parent=palette secondary}
+
+  \setbeamercolor*{separation line}{}
+  \setbeamercolor*{fine separation line}{}
+
+  \setbeamercolor{caption name}{fg=normal text.fg}
+  \setbeamertemplate{navigation symbols}{}
+
+  \setbeamerfont{footnote}{size=\tiny}
+
+  \setbeamercolor{bibliography entry author}{fg=normal fg}
+  \setbeamercolor{bibliography entry title}{fg=normal fg}
+  \setbeamercolor{bibliography entry location}{fg=primary fg}
+  \setbeamercolor{bibliography entry note}{fg=primary fg}
+}

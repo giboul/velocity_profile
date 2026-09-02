@@ -1,0 +1,580 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[justification=centering]{caption}
+\usepackage[justification=centering]{subcaption}
+\usepackage[inkscapelatex=true,inkscapearea=page]{svg}
+\usepackage{enumitem}
+\usepackage{bm,amsmath,amssymb}
+
+\usepackage{fontspec}
+\defaultfontfeatures{Mapping=tex-text}
+\setromanfont{Linux Libertine O}
+\usepackage{libertine}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{natbib}\bibliographystyle{authordate1}
+\usepackage[a4paper,hmargin=2cm,vmargin=3cm]{geometry}
+\usepackage[colorlinks=true,allcolors=MidnightBlue]{hyperref}
+\usepackage{float}
+
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setlength{\parindent}{0pt}
+\svgsetup{width=0.9\linewidth}
+
+\title{Derivation of the double-averaged Navier-Stokes equations for a fixed porous medium}
+\author{Axel Giboulot}
+\date{\today}
+
+\renewcommand*{\figureautorefname}{figure}
+\renewcommand*{\tableautorefname}{table}
+\renewcommand*{\equationautorefname}{equation}
+
+\begin{document}
+
+% \renameautorefname{Figure}{figure}
+% \renameautorefname{Table}{table}
+% \renameautorefname{Equation}{equation}
+
+  \maketitle
+
+{\hypersetup{hidelinks}\tableofcontents}
+
+\clearpage
+
+\section{Introduction}
+
+The Navier-Stokes equations describe the conservation of mass and momentum of fluids in motion.
+They can be averaged in both space and time to explicitly state the contributions of turbulence and the resistance to flow offered by a porous medium.
+The resulting set of equations is called the \emph{double-averaged} Navier-Stokes equations.
+It is available in literature \citep{Nikora2007}, but its derivation can be tedious.
+While derivations have already been published \citep{Rousseau2022}, a few steps could benefit from further clarification.
+Consequently, I hereby derive this set of equations starting from the well-known time-(or Reynolds-)averaged Navier-Stokes equations in an editable format. Contributions are welcome.
+
+\section{The time-averaged Navier-Stokes equations}
+
+Newton's second law can be applied to a Newtonian fluid to find the local formulation of momentum balance. Combined with the local mass conservation equation, they make the Navier-Stokes equations.
+Then decomposing the velocity vector $\bm u$ into a time-averaged component $\bm{\bar u}$ and a temporal fluctuation $\bm u'$ yields the following time-(or Reynolds-)averaged Navier-Stokes equations. In this derivation, the fluid is considered incompressible.
+
+$$\bm\nabla\cdot\bm{\bar u} = 0,$$
+
+$$\frac{\partial\bm{\bar u}}{\partial t} + \bm\nabla\cdot\left(\bm{\bar u}\otimes \bm{\bar u}\right) + \bm\nabla\cdot\overline{\bm u'\otimes\bm u'} = \bm g -\frac{1}{\varrho}\nabla p + \nu\nabla^2\bm{\bar u}.$$
+
+Where
+
+\begin{itemize}
+  \item $\varrho$ is the unit mass of the fluid,
+  \item $\bm g$ stands for gravity,
+  \item $p$ is the pressure,
+  \item $\nu$ is the kinematic viscosity and
+  \item $t$ is time.
+\end{itemize}
+
+The time-averaging procedure over some period $T$ is defined for any variable $\psi$ as follows with $t$ representing time and $\bm x$ the vector of spatial coordinates.
+
+$$\bar \psi(\bm x, t)\doteq\frac{1}{T}\int_{t-T/2}^{t+T/2} \psi(\bm x, t)~\mathrm dt,$$
+$$\psi = \bar \psi + \psi'.$$
+
+It is assumed that the following time-averaging rule holds for all well-behaved functions $\omega$ and constants $a$ and $b$.
+
+$$\overline{a\bar\psi\omega+b} = a\bar\psi\bar\omega+b.$$
+
+It then comes naturally that the time-average of the temporal fluctuations $\overline{\psi'}$ is null.
+
+$$\bar\psi=\overline{\bar\psi}+\overline{\psi'},$$
+$$\Rightarrow \bar\psi=\bar\psi+\overline{\psi'},$$
+$$\Rightarrow \overline{\psi'}=0.$$
+
+\section{Space averaging}
+
+We wish to spatially average the previous Reynolds-(or time-)averaged equations over a porous medium. This can be done with a decomposition like Reynolds' by defining a spatial average $\langle\bm{\bar u}\rangle_f$ over some control volume $\mathcal V$ and its underlying spatial fluctuations $\tilde{\bm u}$.
+
+\begin{equation}\label{eq:decomposition}
+  {\bm{\bar u} = \langle\bm{\bar u}\rangle_f + \tilde{\bm u}}
+\end{equation}
+
+This procedure allows to smoothen-out the micro-scale features of the system under investigation while retaining its macro-scale features. This scale of observation is known as the meso-scale.
+The control volume should be smaller than the size of the system but much larger than the small features of the porous media.
+This control volume is sometimes refered to as the representative elementary volume (REV) and is commonly used in geomechanics where the flow is usually laminar. The double-averaged Navier-Stokes equations extend this concept to turbulent flows.
+
+\section{Definition of the averages}
+
+To formally delimit the porous medium, the indicating function ${\delta(\bm x, t)}$ is defined : its value is 1 in the fluid phase $\mathcal V_f$ and 0 in the solid phase $\mathcal V_s$.
+A drawing of the situation is provided in \autoref{fig:def}.
+
+$$\delta(\bm x, t) \doteq
+\begin{cases}
+    1 \text{ if } \bm x \in \mathcal V_f,\\
+    0 \text{ otherwise.}
+\end{cases}$$
+
+\begin{figure}
+  \centering
+  \includesvg{gfx/Whitaker_definition.svg}
+  \caption{Drawing of an control volume \citep{Whitaker1999}.\label{fig:def}}
+\end{figure}
+
+Two kinds of averages are needed :
+
+\begin{itemize}
+\item
+  a first average over the control volume with a fixed averaging window and
+\item
+  a second average over the fluid phase where all variables are clearly defined.
+\end{itemize}
+
+\subsection{The fluid phase average}
+
+This average is defined as the integral of some quantity $\psi$ in the fluid phase, normalized with respect to the entire control volume $\mathcal V$.
+
+$$\langle\psi\rangle_v(\bm x, t) \doteq \frac{1}{V}\int_{\mathcal V} \psi(\bm x+\bm\xi, t) \delta(\bm x + \bm\xi, t) ~\left|\mathrm d\bm \xi\right|.$$
+
+Where the position $\bm x$ is fixed and the variable ${\bm x + \bm\xi}$ is the vector exploring the domain $\mathcal V$.
+The quantity ${\left|\mathrm d\bm\xi\right|}$ is defined as the associated infinitesimal volume.
+This formulation can be simplified by noting that only the subdomain $\mathcal V_f\subseteq\mathcal V$ contributes to the integral, as the indicating function $\delta$ nullifies the product elsewhere (in ${\mathcal V_s=\mathcal V\backslash\mathcal V_f}$).
+
+$$\langle\psi\rangle_v(\bm x, t) = \frac{1}{V}\int_{\mathcal V_f} \psi(\bm x+\bm\xi, t)~\left|\mathrm d\bm \xi\right|.$$
+
+For the sake of readability, the notation is further simplified by varying the position $\bm x$ in the right-hand side over the subdomain $\mathcal V_f$ with the control volume $\mathcal V$ being centered on the position $\bm x$ of the left-hand side.
+Additionally, the arguments of the functions are made implicit.
+
+$$\langle\psi\rangle_v = \frac{1}{V}\int_{\mathcal V_f}\psi~\mathrm dV.$$
+
+\subsection{The intrinsic phase average}
+
+This average is defined as the mean value of some quantity $\psi$ over the fluid phase.
+
+$$\langle\psi\rangle_f(\bm x, t) \doteq \frac{1}{V_f}\int_{\mathcal V} \psi(\bm x+\bm\xi, t) \delta(\bm x + \bm\xi, t) ~\left|\mathrm d\bm \xi\right|$$
+
+Similarly to the fluid phase average, this formulation can be simplified.
+
+$$\langle\psi\rangle_f = \frac{1}{V_f}\int_{\mathcal V_f}\psi~\mathrm dV$$
+
+\subsection{Porosity}\label{porosity}
+
+The porosity (volume ratio of fluid to solid phases) can be defined as the fluid phase average of the identity.
+
+$$\epsilon \doteq \langle 1\rangle_v = \frac{V_f}{V}.$$
+
+It is a link between both the averages used here.
+
+\begin{equation}\label{eq:fluid-intrinsic}
+  \langle\psi\rangle_v=\epsilon\langle\psi\rangle_f
+\end{equation}
+
+\section{Averaging rules}\label{averaging-rules}
+
+To lighten up the derivation, we can define averaging rules.
+
+\subsection{Linearity}\label{linearity}
+
+The intrinsic phase average is a linear map. To prove this statement, let's average an affine function.
+
+$$\langle a\psi + b\rangle_f = \frac{1}{V_f}\int_{\mathcal V_f}a\psi+b~\mathrm dV.$$
+
+With constant coefficients $a$ and $b$, the quantity $\psi$ is the only remaining variable in the integral.
+
+$$\langle a\psi + b\rangle_f = a \frac{1}{V_f}\int_{\mathcal V_f}\psi\mathrm dV + b.$$
+
+Showing that the intrinsic phase average is a linear map.
+
+$$\langle a\psi + b\rangle_f = a\langle\psi\rangle_f+b.$$
+
+However, the fluid phase average is not.
+It can be shown by developing the affine function.
+
+$$\langle a\psi+b\rangle_v = \frac{1}{V}\int_{\mathcal V_f} a\psi+b~\mathrm dV.$$
+
+Note that the normalizing volume $V$ is not equal to the integration domain's volume $\int_{\mathcal V_f}\mathrm dV=V_f$.
+
+$$\langle a\psi+b\rangle_v = a\frac{1}{V}\int_{\mathcal V_f} \psi~\mathrm dV + b\frac{1}{V}\int_{\mathcal V_f}~\mathrm dV.$$
+
+Thus, the fluid phase average of the constant coefficient $b$ is reduced by the porosity.
+
+$$\langle a\psi+b\rangle_v = a\langle\psi\rangle_v+\epsilon b.$$
+
+Showing that the fluid phase average is not a linear map.
+
+\subsection{Integration of averaged variables}
+
+Assuming that the control volume $\mathcal V$ is much larger than the porosity lenght-scale, the intrinsic average does not vary significantly within $\mathcal V$ \citep{Carbonell1984}.
+Consequently, variables averaged over the intrinsic phase will be considered constant within an integrating (averaging) procedure over a subdomain $\mathcal D\subseteq\mathcal V$.
+
+\begin{equation}\label{eq:integrate-average}
+  \boxed{\int_{\mathcal D}\langle\psi\rangle_f~\mathrm dA\approx\langle\psi\rangle_f\int_{\mathcal D}~\mathrm dA.}
+\end{equation}
+
+$$\Rightarrow
+\begin{cases}
+    \langle\langle\psi\rangle_f\rangle_f=\langle\psi\rangle_f,\\
+    \langle\langle\psi\rangle_f\rangle_v=\langle\psi\rangle_f\langle1\rangle_v=\epsilon\langle\psi\rangle_f.
+\end{cases}$$
+
+Note that it implies the same argument for the fluid phase average since the porosity $\epsilon=\langle1\rangle_v$ is an averaged quantity as well.
+
+$$\epsilon\langle\psi\rangle_f\int_{\mathcal D}~\mathrm dA=\epsilon\int_{\mathcal D}\langle\psi\rangle_f~\mathrm dA,$$
+
+$$\Leftrightarrow\epsilon\langle\psi\rangle_f\int_{\mathcal D}~\mathrm dA=\int_{\mathcal D}\epsilon\langle\psi\rangle_f~\mathrm dA,$$
+
+$$\Leftrightarrow\langle\psi\rangle_v\int_{\mathcal D}~\mathrm dA=\int_{\mathcal D}\langle\psi\rangle_v~\mathrm dA,$$
+
+\subsection{Nested averages}
+
+Given that an averaged variable $\langle\psi\rangle_f$ should not vary significantly within the control volume $\mathcal V$, its own intrinsic average $\langle\langle\psi\rangle_f\rangle_f$ should be close to $\langle\psi\rangle_f$ itself.
+This argument is consistent with the previous proposition (\autoref{eq:integrate-average}).
+
+$$\langle\langle\psi\rangle_f\rangle_f=\langle\psi\rangle_f.$$
+
+The averaged variable is thus not affected by a supplementary intrinsic phase average.
+This rule is identical to the Reynolds averaging rule ${\bm{\overline{\bar u}}=\bm{\bar u}}$.
+However, the fluid phase average will reduce the average value by the porosity (contrary to the previous assumption in literature ${\langle\langle\psi\rangle_v\rangle_v=\langle\psi\rangle_v}$ \citep{Gray1974}).
+
+$$\langle\langle\psi\rangle_v\rangle_v = \epsilon\langle\langle\psi\rangle_v\rangle_f = \epsilon\langle\psi\rangle_v\left(=\epsilon^2\langle\psi\rangle_f\right),$$
+
+$$\langle\langle\psi\rangle_v\rangle_f = \langle\epsilon\langle\psi\rangle_f\rangle_f = \epsilon\langle\langle\psi\rangle_f\rangle_f = \epsilon\langle\psi\rangle_f,$$
+
+$$\langle\langle\psi\rangle_f\rangle_v = \epsilon\langle\langle\psi\rangle_f\rangle_f = \epsilon\langle\psi\rangle_f,$$
+
+$$\langle\langle\psi\rangle_f\rangle_f = \langle\psi\rangle_f.$$
+
+Note that the fluid and intrinsic phase average commute. This point is proof that the average of the spatial fluctuations is null.
+Using the intrinsic phase average as a linear map and simplifying the nested average yields
+
+$$\langle\psi\rangle_f = \langle\langle\psi\rangle_f + \tilde\psi\rangle_f,$$
+$$\langle\psi\rangle_f = \langle\psi\rangle_f + \langle\tilde\psi\rangle_f.$$
+
+And the average of the spatial fluctuations can only be null.
+
+\begin{equation}\label{eq:average-fluctuation}
+  \boxed{\langle\tilde\psi\rangle_f=0.}
+\end{equation}
+
+\subsection{Spatial averaging theorem}
+
+Average and gradient do not commute as per the Leibniz formula.
+By translating the control volume $\mathcal V$ through an arbitrary path, the directional derivative of an average can be related to the gradient of the averages.
+An illustration of the procedure is given in \autoref{fig:trans}.
+
+\begin{figure}
+  \centering
+  \includesvg{gfx/Whitaker_translation.svg}
+  \caption{Differential displacement of the control volume \citep{Whitaker1999}.\label{fig:trans}}
+\end{figure}
+
+Starting with the spatial derivative in the form of a small translation, we come back to the definition of the derivative with a limit.
+
+$$\frac{\mathrm d}{\mathrm d s}\int_{\mathcal V}\psi\delta~\mathrm dV = \lim_{\Delta s\to 0}\frac{1}{\Delta s}\left(\int_{\mathcal V(s+\Delta s)}\psi\delta~\mathrm dV - \int_{\mathcal V(s)}\psi\delta~\mathrm dV\right).$$
+
+This expression is equivalent to taking the integral over the exclusive union of both control volumes ${\mathcal V(s+\Delta s)\oplus\mathcal V(s)}$.
+
+$$\frac{\mathrm d}{\mathrm d s}\int_{\mathcal V}\psi\delta~\mathrm dV = \lim_{\Delta s\to 0}\frac{1}{\Delta s}\int_{\mathcal V(s+\Delta s)\oplus\mathcal V(s)}\psi\delta~\mathrm dV.$$
+
+This integral can be simplified for an infinitesimal translation
+$\Delta s$ \citep{SteinBarcellos1992}.
+
+$$\frac{\mathrm d}{\mathrm d s}\int_{\mathcal V}\psi\delta~\mathrm dV = \lim_{\Delta s\to 0}\frac{1}{\Delta s}\int_{\mathcal S}\psi\delta\bm\lambda\cdot\bm n~\mathrm dA\cdot \Delta s.$$
+
+The limit on $\Delta s$ vanishes and the constant vector $\bm\lambda$ can be taken out of the integral.
+
+$$\frac{\mathrm d}{\mathrm d s}\int_{\mathcal V}\psi\delta~\mathrm dV = \bm\lambda\cdot\int_{\mathcal S}\psi\delta\bm n~\mathrm dA.$$
+
+The left hand side can be rewritten in terms of $\bm\lambda$ by taking the directional derivative.
+
+$$\bm\lambda\cdot\nabla\left(\int_{\mathcal V}\psi\delta~\mathrm dV\right) = \bm\lambda\cdot\int_{\mathcal S}\psi\bm n~\mathrm dA.$$
+
+Since the above equation holds for any translation $\bm\lambda\in\mathbb R^3$, we have that
+
+$$\nabla\left(\int_{\mathcal V}\psi\delta~\mathrm dV\right) = \int_{\mathcal S}\psi\delta\bm n~\mathrm dA.$$
+
+By subtracting the fluid-solid interface $\mathcal S_s$ from the control volume's border $\partial\mathcal V$, the indicating function can be disposed of in the previous expression.
+This can be seen in \autoref{fig:trans} by keeping in mind that the indicating function is null outside of the fluid phase's domain $\mathcal V_f$.
+
+$$\nabla\left(\int_{\mathcal V}\psi\delta~\mathrm dV\right) = \int_{\partial\mathcal V_f}\psi\bm n~\mathrm dA - \int_{\mathcal S_s}\psi\bm n~\mathrm dA.$$
+
+This form allows the application of the divergence theorem.
+
+$$\nabla\left(\int_{\mathcal V}\psi\delta~\mathrm dV\right) = \int_{\mathcal V_f}\nabla\psi~\mathrm dV - \int_{\mathcal S_s}\psi\bm n~\mathrm dA.$$
+
+And because the control volume $V$ is fixed, the fluid phase average smoothly appears.
+
+$$\nabla\left(\frac{1}{V}\int_{\mathcal V}\psi\delta~\mathrm dV\right) = \frac{1}{V}\int_{\mathcal V_f}\nabla\psi~\mathrm dV - \frac{1}{V}\int_{\mathcal S_s}\psi\bm n~\mathrm dA.$$
+
+The spatial averaging theorem finally takes the following form :
+
+\begin{equation}\label{eq:averaging-theorem}
+  \boxed{\langle\nabla\psi\rangle_v = \nabla\langle\psi\rangle_v + \frac{1}{V}\int_{\mathcal S_s}\psi\bm n~\mathrm dA.}
+\end{equation}
+
+Note that this theorem is valid not only for gradients of scalars ${\nabla\psi}$ but for divergences of vectors ${\bm\nabla\cdot\bm\psi}$ and jacobians ${\nabla\bm\psi}$ as well.
+
+$$\langle\nabla\cdot\bm\psi\rangle_v = \nabla\cdot\langle\bm\psi\rangle_v + \frac{1}{V}\int_{\mathcal S_s}\bm\psi\cdot\bm n~\mathrm dA,$$
+
+$$\langle\nabla\bm\psi\rangle_v = \nabla\langle\bm\psi\rangle_v + \frac{1}{V}\int_{\mathcal S_s}\bm\psi\otimes\bm n~\mathrm dA.$$
+
+\subsection{Spatially averaging a constant variable}
+
+The spatial averaging theorem applied to a constant variable expresses the changes in porosity.
+
+$$\langle\nabla 1\rangle_v = \nabla\langle1\rangle_v + \frac{1}{V}\int_{\mathcal S_s}\bm n~\mathrm dA,$$
+$$\langle 0\rangle_v = \nabla\epsilon + \frac{1}{V}\int_{\mathcal S_s}\bm n~\mathrm dA,$$
+
+\begin{equation}\label{eq:average-empty}
+  \boxed{\frac{1}{V}\int_{\mathcal S_s}\bm n~\mathrm dA = -\nabla\epsilon.}
+\end{equation}
+
+\subsection{Spatially averaging a time derivative}
+
+It can be demonstrated that for fixed control volumes (with a null velocity at the boundary, ${\bm w=0}\ \forall\bm x\in\mathcal S_s$), the average of the accumulation does not include any additional terms.
+
+$$\frac{\partial}{\partial t}\int_{\mathcal V_f}\psi~\mathrm dV = \int_{\mathcal V_f}\frac{\partial\psi}{\partial t}~\mathrm dV + \int_{\partial\mathcal V_f}\psi \cdot(\bm w\cdot\bm n)~\mathrm dA,$$
+
+\begin{equation}\label{eq:average-accumulation}
+  \boxed{\frac{\partial}{\partial t}\int_{\mathcal V_f}\psi~\mathrm dV = \int_{\mathcal V_f}\frac{\partial\psi}{\partial t}~\mathrm dV.}
+\end{equation}
+
+\subsection{No-slip condition}
+
+At the interface between the fluid and the solid phases $\mathcal S_s$, the velocity of the fluid phase $\bm u$ and that of the solid phase $\bm w$ are one and the same. Because the scope of this derivation is limited to fixed beds, the solid phase's velocity $\bm w$ is null.
+
+$$\bm u = \bm w = \bm 0,\ \forall\bm x\in\mathcal S_s.$$
+
+Consequently, the temporal average of the velocity at that point is null as well.
+
+$$\bm u = \bm{\bar u} = \bm 0,\ \forall\bm x\in\mathcal S_s.$$
+
+It also implies null temporal fluctuations $\bm u'$ are null since $\bm u=\bm{\bar u}+\bm u'$.
+
+\begin{equation}\label{eq:no-slip}
+  \bm u = \bm{\bar u} = \bm u' = \bm 0,\ \forall\bm x\in\mathcal S_s.
+\end{equation}
+
+This relation will greatly simplify the expressions to come.
+
+\section{Derivation of the DANS equations}
+
+We apply the fluid phase average to the Reynolds-(or time-)averaged Navier-Stokes equation, aiming to develop a new set of equations with the double-averaged variables as the unknowns.
+
+\subsection{Continuity equation}
+
+The continuity equation is fundamentally unchanged. The original continuity equation is
+
+$$\langle\bm\nabla\cdot\bm{\bar u}\rangle_v = 0.$$
+
+By applying the spatial averaging theorem (\autoref{eq:averaging-theorem}), we have that
+
+$$\bm\nabla\cdot\langle\bm{\bar u}\rangle_v + \frac{1}{V}\int_{\mathcal S_s}{\bm{\bar u}\cdot \bm n}~\mathrm dA = 0.$$
+
+Because of the no-slip condition (\autoref{eq:no-slip}) at the fluid-solid interface, both the time-averaged speed ${\bm{\bar u}}$ and the temporal fluctuations ${\bm u'}$ are null as well.
+
+$$\bm\nabla\cdot\langle\bm{\bar u}\rangle_v = 0.$$
+
+By expressing the intrinsic phase average (\autoref{eq:fluid-intrinsic}), the double-averaged continuity equation is
+
+$$\boxed{\bm\nabla\cdot\left(\epsilon\langle\bm{\bar u}\rangle_f\right) = 0.}$$
+
+\subsection{Momentum equation}
+
+\subsubsection{Advective term}
+
+The advective term is the source of turbulence. When its velocity is decomposed (\autoref{eq:decomposition}), the dispersive stress appears.
+
+$$\langle\bm\nabla\cdot \bm{\bar u}\otimes\bm{\bar u}\rangle_v = \nabla\cdot\langle\bm{\bar u}\otimes\bm{\bar u}\rangle_v + \int_{\mathcal S_s}\bm{\bar u}\otimes\bm{\bar u}\cdot\bm n~\mathrm dA.$$
+
+But the integral term is null because of the no-slip condition
+(\autoref{eq:no-slip}).
+
+$$\langle\bm\nabla\cdot \bm{\bar u}\otimes\bm{\bar u}\rangle_v = \nabla\cdot\langle\bm{\bar u}\otimes\bm{\bar u}\rangle_v.$$
+
+We can take the intrinsic phase average (\autoref{eq:fluid-intrinsic}).
+
+$$\langle\bm\nabla\cdot \bm{\bar u}\otimes\bm{\bar u}\rangle_v = \nabla\cdot\left(\epsilon\langle\bm{\bar u}\otimes\bm{\bar u}\rangle_f\right).$$
+
+And decompose the speed (\autoref{eq:decomposition}) to get the dispersive stress tensor.
+Remember that the average of the spatial fluctuations is null (\autoref{eq:average-fluctuation}) and that averaged quantities can be considered constant within an averaging procedure (\autoref{eq:integrate-average}).
+
+$$\langle\bm\nabla\cdot \bm{\bar u}\otimes\bm{\bar u}\rangle_v = \nabla\cdot\left(\epsilon\langle\bm{\bar u}\rangle_f\otimes\langle\bm{\bar u}\rangle_f + \epsilon\langle \tilde{\bm u}\otimes\tilde{\bm u}\rangle_f\right).$$
+
+Distributing the divergence yields the final expression.
+
+$$\boxed{\langle\bm\nabla\cdot \bm{\bar u}\otimes\bm{\bar u}\rangle_v = \nabla\cdot\left(\epsilon\langle\bm{\bar u}\rangle_f\otimes\langle\bm{\bar u}\rangle_f\right) + \nabla\cdot\left(\epsilon\langle \tilde{\bm u}\otimes\tilde{\bm u}\rangle_f\right).}$$
+
+The same procedure (until the decomposition $\bm{\bar u}=\bm u' + \tilde{\bm u}$) can be followed for the Reynolds stress tensor.
+
+$$\boxed{\langle\bm\nabla\cdot \overline{\bm u'\otimes\bm u'}\rangle_v = \nabla\cdot\left(\epsilon\langle\overline{\bm u'\otimes\bm u'}\rangle_f\right).}$$
+
+And the total advection is as follows.
+
+$$\boxed{\varrho\langle\overline{\bm\nabla\cdot \bm u\otimes\bm u}\rangle_v =
+\underbrace{\varrho\nabla\cdot\left(\epsilon\langle\bm{\bar u}\rangle_f\otimes\langle\bm{\bar u}\rangle_f\right)}_{\text{Double-averaged advection}}
++ \underbrace{\varrho\nabla\cdot\left(\epsilon\langle \tilde{\bm u}\otimes\tilde{\bm u}\rangle_f\right)}_{\text{Dispersive stress}}
++ \underbrace{\varrho\nabla\cdot\left(\epsilon\langle\overline{\bm u'\otimes\bm u'}\rangle_f\right)}_{\text{Reynolds stress}}.}$$
+
+\subsubsection{Accumulative term}
+
+From the average of a time derivative (\autoref{eq:average-accumulation}), we know that the average and the derivative commute for a fixed control volume ($\bm w = \bm 0$).
+
+$$\left\langle\frac{\partial \bm{\bar u}}{\partial t}\right\rangle_v = \epsilon\left\langle\frac{\partial \bm{\bar u}}{\partial t}\right\rangle_f = \epsilon\frac{\partial\langle\bm{\bar u}\rangle_f}{\partial t}.$$
+
+\subsubsection{Pressure gradient}
+
+The pressure is subject to sudden spatial fluctuations close to rigid walls.
+Thus the decomposition shows a integral term along the fluid-solid interface expressing part of the drag force density.
+We can start by applying the spatial averaging theorem (\autoref{eq:averaging-theorem}).
+
+$$\langle\nabla\bar p\rangle_v = \nabla\langle\bar p\rangle_v + \frac{1}{V}\int_{\mathcal S_s}\bar p\bm n~\mathrm dA.$$
+
+The intrinsic phase pressure can directly be expressed (\autoref{eq:decomposition}),
+
+$$\langle\nabla\bar p\rangle_v = \nabla \left(\epsilon\langle\bar p\rangle_f\right) + \frac{1}{V}\int_{\mathcal S_s}\left(\langle\bar p\rangle_f+\tilde p\right)\bm n~\mathrm dA,$$
+
+the averaged pressure can be taken out of the integral (\autoref{eq:integrate-average}), and the gradient distributed.
+
+$$\langle\nabla\bar p\rangle_v = \langle\bar p\rangle_f \nabla \epsilon + \epsilon\nabla\langle\bar p\rangle_f + \langle\bar p\rangle_f\frac{1}{V}\int_{\mathcal S_s} \bm n~\mathrm dA + \frac{1}{V}\int_{\mathcal S_s}\tilde p\bm n~\mathrm dA.$$
+
+By means of the spatial averaging theorem applied to a constant variable (\autoref{eq:average-empty}), the empty integral is simplified.
+
+$$\langle\nabla\bar p\rangle_v = \langle\bar p\rangle_f \nabla \epsilon + \epsilon\nabla\langle\bar p\rangle_f - \langle\bar p\rangle_f\nabla\epsilon + \frac{1}{V}\int_{\mathcal S_s}\tilde p\bm n~\mathrm dA.$$
+
+And the final expression is obtained.
+
+$$\boxed{\langle\nabla\bar p\rangle_v = \epsilon \nabla\langle\bar p\rangle_f + \underbrace{\frac{1}{V}\int_{\mathcal S_s}\tilde p\bm n~\mathrm dA}_{\text{Contribution to the drag force density }\bm{\bar f}}.}$$
+
+\subsubsection{Diffusion}
+
+The diffusion term receives a correction due to porosity changes (${\nabla\epsilon}$ and ${\nabla^2\epsilon}$).
+Additionally, the contribution of spatial fluctuations of velocity to the drag force density across the fluid-solid interface appears.
+First of all, the spatial averaging theorem can be applied twice (\autoref{eq:averaging-theorem}).
+
+$$\langle\bm\nabla^2\bm{\bar u}\rangle_v = \langle\bm\nabla\cdot\nabla\bm{\bar u}\rangle_v,$$
+$$\langle\bm\nabla^2\bm{\bar u}\rangle_v = \bm\nabla\cdot\langle\nabla\bm{\bar u}\rangle_v + \frac{1}{V}\int_{\mathcal S_s}\nabla\bm{\bar u}\cdot \bm n~\mathrm dA,$$
+$$\langle\bm\nabla^2\bm{\bar u}\rangle_v = \bm\nabla\cdot\left(\nabla\langle\bm{\bar u}\rangle_v+\frac{1}{V}\int_{\mathcal S_s}\bm{\bar u}\otimes\bm n~\mathrm dA\right) + \frac{1}{V}\int_{\mathcal S_s}\nabla\bm{\bar u}\cdot \bm n~\mathrm dA.$$
+
+The no-slip condition is applied (\autoref{eq:no-slip}).
+
+$$\langle\bm\nabla^2\bm{\bar u}\rangle_v = \bm\nabla\cdot\nabla\langle\bm{\bar u}\rangle_v + \frac{1}{V}\int_{\mathcal S_s}\nabla\bm{\bar u}\cdot \bm n~\mathrm dA.$$
+
+This last term is an expression of the drag forces applied by the solid boundaries.
+While closures exist for the drag force density for homogeneous media, we wish to extract the effects of heterogeneity $\left(\nabla\epsilon\right)$ from the integral term and then use an existing closure for the homogeneous component.
+
+\bigskip
+
+The intrinsic phase average (\autoref{eq:fluid-intrinsic}) can be expressed to decompose the velocity vector (\autoref{eq:decomposition}).
+
+$$\langle\bm\nabla^2\bm{\bar u}\rangle_v = \bm\nabla\cdot\nabla\left(\epsilon\langle\bm{\bar u}\rangle_f\right) + \frac{1}{V}\int_{\mathcal S_s}\left(\nabla\langle \bm{\bar u}\rangle_f\cdot \bm n + \nabla\tilde{\bm u}\cdot \bm n\right)~\mathrm dA,$$
+
+$$\langle\bm\nabla^2\bm{\bar u}\rangle_v = \bm\nabla\cdot\nabla\left(\epsilon\langle\bm{\bar u}\rangle_f\right) + \frac{1}{V}\int_{\mathcal S_s}\nabla\langle \bm{\bar u}\rangle_f\cdot \bm n~\mathrm dA + \frac{1}{V}\int_{\mathcal S_s}\nabla\tilde{\bm u}\cdot \bm n~\mathrm dA,$$
+
+$$\langle\bm\nabla^2\bm{\bar u}\rangle_v = \epsilon\nabla^2\langle\bm{\bar u}\rangle_f + 2\nabla\langle\bm{\bar u}\rangle_f\cdot\nabla\epsilon + \langle\bm{\bar u}\rangle_f\nabla^2\epsilon + \frac{1}{V}\int_{\mathcal S_s}\nabla\langle \bm{\bar u}\rangle_f\cdot \bm n~\mathrm dA + \frac{1}{V}\int_{\mathcal S_s}\nabla\tilde{\bm u}\cdot \bm n~\mathrm dA.$$
+
+While \citet{Rousseau2022} directly wrote that ${\int_\mathcal{S_s}\nabla\langle\bm{\bar u}\rangle_f\cdot\bm n~\mathrm dA=\nabla\langle\bm{\bar u}\rangle_f\cdot\int_\mathcal{S_s}\bm n~\mathrm dA}$, it can be quickly justified by switching between fluid and intrinsic phase averages (\autoref{eq:fluid-intrinsic}), exposing the average of the gradient (\autoref{eq:averaging-theorem}) to simplify the integral (\autoref{eq:integrate-average}), and using the no-slip condition (\autoref{eq:no-slip}).
+
+\begin{align*}
+\int_\mathcal{S_s}\nabla\langle\bm{\bar u}\rangle_f\cdot\bm n~\mathrm dA &= \int_{\mathcal S_s}\nabla\left(\epsilon^{-1}\langle\bm{\bar u}\rangle_v\right)\cdot\bm n~\mathrm dA,\\
+    &= \int_{\mathcal S_s}\nabla\langle\epsilon^{-1}\bm{\bar u}\rangle_v\cdot\bm n~\mathrm dA,\\
+    &= \int_{\mathcal S_s}\left[\left\langle\nabla\left(\epsilon^{-1}\bm{\bar u}\right)\right\rangle_v - \int_{\mathcal S_s}\epsilon^{-1}\bm{\bar u}\otimes\bm n~\mathrm dA\right]\cdot\bm n~\mathrm dA,\\
+    &= \int_{\mathcal S_s}\left\langle\nabla\left(\epsilon^{-1}\bm{\bar u}\right)\right\rangle_v\cdot\bm n~\mathrm dA,\\
+    &= \left\langle\nabla\left(\epsilon^{-1}\bm{\bar u}\right)\right\rangle_v\cdot\int_{\mathcal S_s}\bm n~\mathrm dA,\\
+    &= -\left\langle\nabla\left(\epsilon^{-1}\bm{\bar u}\right)\right\rangle_v\cdot\nabla\epsilon,\\
+    &= -\left(\nabla\left\langle\epsilon^{-1}\bm{\bar u}\right\rangle_v + \int_{\mathcal S_s}\epsilon^{-1}\bm{\bar u}\otimes\bm n~\mathrm dA\right)\cdot\nabla\epsilon,\\
+    &= -\nabla\left\langle\epsilon^{-1}\bm{\bar u}\right\rangle_v\cdot\nabla\epsilon,\\
+    &= -\nabla\left(\epsilon^{-1}\left\langle\bm{\bar u}\right\rangle_v\right)\cdot\nabla\epsilon,\\
+    &= -\nabla\left\langle\bm{\bar u}\right\rangle_f\cdot\nabla\epsilon.\\
+\end{align*}
+
+Inserting this result back into the laplacian of the velocity vector ${\langle\nabla^2\bm{\bar u}\rangle_v}$ yields
+
+$$\langle\bm\nabla^2\bm{\bar u}\rangle_v = \bm\nabla\cdot\nabla\left(\epsilon\langle\bm{\bar u}\rangle_f\right) -\nabla\langle \bm{\bar u}\rangle_f\nabla\epsilon + \frac{1}{V}\int_{\mathcal S_s}\nabla\tilde{\bm u}\cdot \bm n~\mathrm dA.$$
+
+The divergence can be developed to read the total effect of a heterogeneous porosity. When terms involving the porosity gradient ${\nabla\epsilon}$ and laplacian ${\nabla^2\epsilon}$ are omitted (homogeneous medium), the remaining laplacian of the average velocity is termed the \emph{Brinkman correction}.
+
+$$\langle\bm\nabla^2\bm{\bar u}\rangle_v = \bm\nabla\cdot\left[\epsilon\nabla\langle\bm{\bar u}\rangle_f + \langle\bm{\bar u}\rangle_f\otimes\nabla\epsilon\right] - \nabla\langle \bm{\bar u}\rangle_f\nabla\epsilon + \frac{1}{V}\int_{\mathcal S_s}\nabla\tilde{\bm u}\cdot \bm n~\mathrm dA.$$
+
+$$\langle\bm\nabla^2\bm{\bar u}\rangle_v = \underbrace{\epsilon\nabla^2\langle\bm{\bar u}\rangle_f}_\text{Brinkman correction} + 2\nabla\langle\bm{\bar u}\rangle_f\cdot\nabla\epsilon + \langle\bm{\bar u}\rangle_f\nabla^2\epsilon - \nabla\langle \bm{\bar u}\rangle_f\nabla\epsilon + \frac{1}{V}\int_{\mathcal S_s}\nabla\tilde{\bm u}\cdot \bm n~\mathrm dA.$$
+
+Which leads to the final expression.
+
+$$\boxed{\langle\bm\nabla^2\bm{\bar u}\rangle_v = \underbrace{\epsilon\nabla^2\langle\bm{\bar u}\rangle_f}_\text{Brinkman correction} + \underbrace{\nabla\langle\bm{\bar u}\rangle_f\cdot\nabla\epsilon + \langle\bm{\bar u}\rangle_f\nabla^2\epsilon}_{\text{Porosity heterogeneity}} + \underbrace{\frac{1}{V}\int_{\mathcal S_s}\nabla\tilde{\bm u}\cdot \bm n~\mathrm dA}_{\text{Contribution to the drag force density }\bm{\bar f}}.}$$
+
+\subsubsection{Drag force density}
+
+The contribution of the fluctuations of the pressure and of the laplacian can be combined into a single term.
+
+$$\bm{\bar f} \doteq \frac{1}{V_f}\int_{\mathcal S_s}\left(\mu\nabla\tilde{\bm u} - \tilde p\bm I\right)\bm n~\mathrm dA.$$
+
+By taking a step back, it can be noted that these are akin to the fluctuations of the applied traction ${\bm t=\bm\sigma\bm n}$ (where ${\bm\sigma}$ is the stress tensor) on the solid interface.
+
+$$\bm{\bar f} = \frac{1}{V_f}\int_{\mathcal S_s}\underbrace{\tilde{\bm\sigma}\bm n}_{\tilde{\bm t}}~\mathrm dA,$$
+
+$$\bm\sigma = \mu\nabla\bm u - p.$$
+
+\paragraph{Closure of the drag force density}
+
+To have a second-order closure, we can use Ergun's equation and take the Forchheimer
+parametrisation \citep{W1996}:
+
+$$\bm{ f} = \overbrace{-\underbrace{\frac{\epsilon\mu}{K}\langle\bm u\rangle_f}_{\text{Darcy}} - \underbrace{\frac{\varrho\epsilon^2c}{\sqrt{K}}\langle\bm u\rangle_f\left|\langle\bm u\rangle_f\right|}_{\text{Forchheimer correction}}}^{\text{Ergun's drag force density}}.$$
+
+which is already a space-averaged form. Time-averaging this form and decomposing the velocity ${\bm u = \bm{\bar u} + \bm u'}$ yields \citep{G2000}:
+
+$$\bm{\bar f} = -\frac{\epsilon\mu}{K}\langle\bm{\bar u}\rangle_f - \frac{\varrho\epsilon^2c}{\sqrt{K}}\overline{\langle\bm u\rangle_f\left|\langle\bm u\rangle_f\right|},$$
+
+$$\bm{\bar f} = -\frac{\epsilon\mu}{K}\langle\bm{\bar u}\rangle_f - \frac{\varrho\epsilon^2c}{\sqrt{K}}\overline{\left(\langle\bm{\bar u}\rangle_f + \langle\bm u'\rangle_f\right)\left|\langle\bm{\bar u}\rangle_f + \langle\bm u'\rangle_f\right|}.$$
+
+Assuming the temporal fluctuations $\bm u'$ are much smaller than the temporally averaged values $\bm{\bar u}$ in the calculation of the norm, it can be expanded to the first-order as follows.
+Note that the assumption $\bm u'\ll\bm{\bar u}$ can be made because the drag force density is predominant (in the momentum balance equation) when the flow is laminar (weakly turbulent or not at all).
+
+\begin{align*}
+\left|\langle\bm{\bar u}\rangle_f+\langle \bm u'\rangle_f\right| & = \sqrt{\left|\langle\bm{\bar u}\rangle_f\right|^2+2\langle\bm{\bar u}\rangle_f\cdot\langle\bm u'\rangle_f+\left|\langle \bm u'\rangle_f\right|^2},\\
+    & = \sqrt{\left|\langle\bm{\bar u}\rangle_f\right|^2+2\langle\bm{\bar u}\rangle_f\cdot\langle\bm u'\rangle_f},\\
+    &= \left|\langle\bm{\bar u}\rangle_f\right|+\frac{\langle\bm{\bar u}\rangle_f\cdot\langle\bm u'\rangle_f}{\left|\langle\bm{\bar u}\rangle_f\right|} + \mathcal \varepsilon\left(\left|\langle\bm u'\rangle_f\right|\right).
+\end{align*}
+
+Reinjecting this expansion in the time-averaged drag force density, we get that
+
+\begin{align*}
+\bm{\bar f} &= -\frac{\epsilon\mu}{K}\langle\bm{\bar u}\rangle_f - \frac{\varrho\epsilon^2c}{\sqrt{K}}\overline{\left(\langle\bm{\bar u}\rangle_f + \langle\bm u'\rangle_f\right)\left(\left|\langle\bm{\bar u}\rangle_f\right|+\frac{\langle\bm{\bar u}\rangle_f\cdot\langle\bm u'\rangle_f}{\left|\langle\bm{\bar u}\rangle_f\right|}\right)},\\
+    &= -\frac{\epsilon\mu}{K}\langle\bm{\bar u}\rangle_f - \frac{\varrho\epsilon^2c}{\sqrt{K}}\left(\overline{\langle\bm{\bar u}\rangle_f\left|\langle\bm{\bar u}\rangle_f\right| + \langle\bm u'\rangle_f\left|\langle\bm{\bar u}\rangle_f\right| + \langle\bm{\bar u}\rangle_f\frac{\langle\bm{\bar u}\rangle_f\cdot\langle\bm u'\rangle_f}{\left|\langle\bm{\bar u}\rangle_f\right|} + \langle\bm u'\rangle_f\frac{\langle\bm{\bar u}\rangle_f\cdot\langle\bm u'\rangle_f}{\left|\langle\bm{\bar u}\rangle_f\right|}}\right),\\
+    &= -\frac{\epsilon\mu}{K}\langle\bm{\bar u}\rangle_f - \frac{\varrho\epsilon^2c}{\sqrt{K}}\left(\langle\bm{\bar u}\rangle_f\left|\langle\bm{\bar u}\rangle_f\right| + \overline{\langle\bm u'\rangle_f\frac{\langle\bm{\bar u}\rangle_f\cdot\langle\bm u'\rangle_f}{\left|\langle\bm{\bar u}\rangle_f\right|}}\right),\\
+    &= -\frac{\epsilon\mu}{K}\langle\bm{\bar u}\rangle_f - \frac{\varrho\epsilon^2c}{\sqrt{K}}\left(\langle\bm{\bar u}\rangle_f\left|\langle\bm{\bar u}\rangle_f\right| + \overline{\langle\bm u'\rangle_f\otimes\langle\bm u'\rangle_f}\frac{\langle\bm{\bar u}\rangle_f}{\left|\langle\bm{\bar u}\rangle_f\right|}\right).
+\end{align*}
+
+Which concludes the derivation led by \citet{G2000} and \citet{Kuwata2013} to time-average Ergun's drag force density.
+
+$$\boxed{\bm{\bar f} = -\frac{\epsilon\mu}{K}\langle\bm{\bar u}\rangle_f - \frac{\varrho\epsilon^2c}{\sqrt{K}}\left(\langle\bm{\bar u}\rangle_f\left|\langle\bm{\bar u}\rangle_f\right| + \overline{\langle\bm u'\rangle_f\otimes\langle\bm u'\rangle_f}\frac{\langle\bm{\bar u}\rangle_f}{\left|\langle\bm{\bar u}\rangle_f\right|}\right).}$$
+
+\subsection{Final system of equations}
+
+The new set of equations, the double-averaged Navier-Stokes equations, is as follows.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Continuity equation
+\end{enumerate}
+
+$$\bm\nabla\cdot\left(\epsilon\langle\bm{\bar u}\rangle_f\right) = 0.$$
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\item
+  Momentum equation
+\end{enumerate}
+
+\begin{align*}
+    \epsilon\frac{\partial\langle\bm{\bar u}\rangle_f}{\partial t} + \bm\nabla\cdot\left(\epsilon\langle\bm{\bar u}\rangle_f\otimes\langle\bm{\bar u}\rangle_f\right) =&+ \epsilon\bm g\\
+        &- \frac{\epsilon}{\varrho}\nabla\langle\overline p\rangle_f\\
+        &+ \bm\nabla\cdot\left(\nu\nabla\cdot\left(\epsilon\langle\bm{\bar u}\rangle_f\right)\right) -\nu\nabla\langle\bm{\bar u}\rangle_f\nabla\epsilon\\
+        &- \bm\nabla\cdot\left(\epsilon\langle \overline{\bm u'\otimes\bm u'}\rangle_f\right)\\
+        &- \bm\nabla\cdot\left(\epsilon\langle \tilde{\bm u}\otimes\tilde{\bm u}\rangle_f\right)\\
+        &+ \frac{\epsilon}{\varrho}\bm{\bar f},\\
+\end{align*}
+
+Where the last three terms need closure.
+
+\clearpage
+
+\bibliography{references}
+\label{sec:bibliographie}
+\addcontentsline{toc}{section}{\bibname}
+\thispagestyle{empty}
+
+\end{document}
