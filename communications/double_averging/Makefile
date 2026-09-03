@@ -15,9 +15,14 @@ LATEX_FLAGS += --halt-on-error
 LATEX_FLAGS += -output-directory=$(OUTDIR)
 LATEX_FLAGS += --shell-escape
 LATEX_FLAGS += -jobname=$(MAIN_STEM)
+
 main:
 	mkdir -p $(OUTDIR)
 	$(ENGINE) $(LATEX_FLAGS) $(MAIN_LATEX) $(FLAGS)
+
+svg:
+	make main
+	pdf2svg $(MAIN_BASE).pdf $(MAIN_BASE).svg
 
 bib:
 	cp $(BIB) $(OUTDIR)/$(BIB)

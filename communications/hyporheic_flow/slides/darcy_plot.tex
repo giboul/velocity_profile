@@ -20,7 +20,8 @@
         \addplot[normal fg, only marks, mark=o, mark size=0.5pt, line width=0.5pt, draw opacity=0.5] table[x=xi,y=f]{media/Chen2020.csv};\addlegendentry{Chen (2020)}
         % \addplot[toravalr, only marks, mark=diamond, line width=0.75pt] table[x=xi,y=f]{media/Recking2008.csv};\addlegendentry{\citeauthor{Recking2008exp}}
         % \addplot[toraval,only marks, mark=asterisk, line width=0.5pt] table[x=x,y=y]{media/armfield.csv};\addlegendentry{Armfield flume}
-        \addplot[red, line width=1pt] table[x=xi,y=f]{media/darcy_double_average.csv};\addlegendentry{$\lambda=0.1$}
+        \addplot[red, dashed, line width=1pt] table[x=xi,y=f]{media/darcy_double_average_lambda0.csv};\addlegendentry{$\lambda=0.0$}
+        \addplot[red, line width=1pt] table[x=xi,y=f]{media/darcy_double_average.csv};\addlegendentry{$\lambda=0.3$}
 
     \end{loglogaxis}
 \end{tikzpicture}

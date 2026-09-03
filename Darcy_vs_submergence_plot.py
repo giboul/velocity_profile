@@ -1,7 +1,7 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from fenics_attempt import VelocityProfileSolver
+from momentum_ODE_solver import VelocityProfileSolver
 
 solver = VelocityProfileSolver()
 
@@ -15,7 +15,7 @@ solver.update({
     "z0": -20.0e-3,
     "z1": 12.0e-3,
     "n_cells": 10_000,
-    "lam": 0.1,
+    "lam": 0.3,
 })
 
 def ferguson(xi, a1=6.5, a2=2.5):
@@ -60,7 +60,7 @@ ax_f.yaxis.set_label_position("right")
 ax_f.yaxis.tick_right()
 fig.show()
 
-z0 = 0.0 - solver.d_p / 2
+z0 = 0.0 - solver.d_p / 4
 
 for i, xii in enumerate(xi):
 
