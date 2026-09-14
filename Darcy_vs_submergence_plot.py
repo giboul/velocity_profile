@@ -73,22 +73,14 @@ for i, xii in enumerate(xi):
 
     u_star = np.sqrt(depth * solver.g * solver.slope)
     m = zs > z0
-    # `depth`, not `solver.depth`: the property is z1 - z(eps=0.8), a different
-    # height from the z1 - z0 used for u_star and xi just above.  Mixing them
-    # made u_mean too large by 2.1x at xi = 2, i.e. f 4.5x too small, with the
-    # error worst at the low-submergence end.
     u_mean = np.trapezoid(us[m] * solver.porosity(zs[m]), zs[m]) / depth
 
     print(f"{u_mean / u_star = :g}  |  {depth / solver.d_p = :g}")
     f[i] = 8 * (u_star / u_mean)**2
     xi[i] = depth / solver.d_p
 
-    if False:
-        l_u.set_data(us / u_star, zs / solver.d_p)
-    else:
-        ax_u.plot(us / u_star, zs / solver.d_p)
-    # patch.remove()
-    # patch = ax_u.fill_betweenx(zs[m]/solver.d_p, us[m]/u_star, alpha=0.2)
+    ax_u.plot(us / u_star, zs / solver.d_p)
+
     l_f.set_data(xi, f)
     for ax in [ax_u, ax_f]:
         ax.relim()

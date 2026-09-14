@@ -1,0 +1,3 @@
+- plot $q$ instead of $h$
+- no-slip condition at the bed
+- test impermeable bed

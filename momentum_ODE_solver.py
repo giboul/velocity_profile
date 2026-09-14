@@ -45,6 +45,8 @@ from dolfinx import fem, mesh
 from dolfinx.fem.petsc import NonlinearProblem
 from mpi4py import MPI
 
+
+plt.style.use("communications/hyporheic_flow/lhe.mplstyle")
 # Consistent naming between the two engines, so `engine.<f>` works for both.
 ufl.maximum = ufl.max_value
 ufl.log = ufl.ln
@@ -319,14 +321,14 @@ def plot_profile(zs, us, dus, es, des, fs, tau_v, tau_t, tau_d, ze08,
                  z1, slope, rho, nu, g=G):
     """Four panels: profile, stresses, balance contributions, relative error."""
 
-    fig, axes = plt.subplots(ncols=4, figsize=(15, 5), sharey=True)
-    fig.suptitle(
-        "Numerical resolution of the steady-state, uniform flow velocity "
-        "profile over a porous bed"
-        "\n"
-        r"$M_x' = \epsilon\varrho g i + (\tau_v+\tau_t+\tau_d)' + \epsilon f "
-        r"- \varrho\nu\epsilon' u' = 0$"
-    )
+    fig, axes = plt.subplots(ncols=4, figsize=(11.3, 4), sharey=True)
+    # fig.suptitle(
+    #     "Numerical resolution of the steady-state, uniform flow velocity "
+    #     "profile over a porous bed"
+    #     "\n"
+    #     r"$M_x' = \epsilon\varrho g i + (\tau_v+\tau_t+\tau_d)' + \epsilon f "
+    #     r"- \varrho\nu\epsilon' u' = 0$"
+    # )
 
     for i, ax in enumerate(axes):
         ax.axhline(0.0, ls="-", lw=0.5, c="k", alpha=0.5,
@@ -391,7 +393,7 @@ def plot_profile(zs, us, dus, es, des, fs, tau_v, tau_t, tau_d, ze08,
     axes[3].plot(rerr[m], zs[m])
     axes[3].set_xlim(axes[3].get_xlim())
     axes[3].plot(rerr[~m], zs[~m], ls="--")
-    axes[3].set_xlabel(r"Relative error  $\frac{M_x'}{\epsilon\varrho g i}$ [%]")
+    axes[3].set_xlabel(r"Relative error  $\frac{\boldsymbol{p}_x'}{\epsilon\varrho g i}$ [%]")
 
     fig.tight_layout()
     return fig, axes

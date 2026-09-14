@@ -1,0 +1,6 @@
+font.family:    serif
+font.serif:     Linux Libertine O
+font.size:      10
+pgf.texsystem:  xelatex
+pgf.rcfonts:    False
+pgf.preamble:   \usepackage{fontspec}\setmainfont{Linux Libertine O}\usepackage{amsmath,bm}\usepackage[libertine]{newtxmath}
