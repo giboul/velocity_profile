@@ -1,29 +1,27 @@
 import numpy as np
 from matplotlib import pyplot as plt
 
-from momentum_ODE_solver import VelocityProfileSolver
+from momentum_ODE_solver import Parameters, porosity, run
 
-solver = VelocityProfileSolver()
-
-solver.update({
-    # Variables of the case
-    "rho": 1000.0,
-    "nu": 1.0e-6,
-    "slope": 0.1e-2,
-    "d_p": 8.0e-3,
-    "eps_b": 0.38,
-    "z0": -20.0e-3,
-    "z1": 12.0e-3,
-    "n_cells": 10_000,
-    "lam": 0.3,
-})
+# Variables of the case
+p = Parameters(
+    rho=1000.0,
+    nu=1.0e-6,
+    slope=0.1e-2,
+    d_p=8.0e-3,
+    eps_b=0.38,
+    z0=-20.0e-3,
+    z1=12.0e-3,
+    n_cells=10_000,
+    lam=0.3,
+)
 
 def ferguson(xi, a1=6.5, a2=2.5):
     C_f = 3 * xi / np.sqrt(1 + 0.18 * xi**1.67)  # Ferguson (2021)
     return 8 / C_f**2
     C_f = a1*a2*xi / np.sqrt(a1**2 + a2**2 * xi**(5/3))  # Eq. 1.83 (hydraulique)
 
-def recking(xi, i=solver.slope):
+def recking(xi, i=p.slope):
     alpha = np.clip(4*xi**(-0.43), 1, 4) * np.clip(7*i**0.85*xi, 1, 2.6)
     return 8 / (6.25 + 5.75*np.log10(xi/alpha))**2  # Eq. 1.149 (hydraulique)
     C_f = 4.416 * xi**1.904 * (1 + (xi/1.283)**1.618)**(-1.083)
@@ -60,28 +58,30 @@ ax_f.yaxis.set_label_position("right")
 ax_f.yaxis.tick_right()
 fig.show()
 
-z0 = 0.0 - solver.d_p / 4
+z0 = 0.0 - p.d_p / 4
 
 for i, xii in enumerate(xi):
 
-    solver.update({"z1": xii * solver.d_p + z0})
-    zs, us = solver.run()
+    p.z1 = xii * p.d_p + z0
+    zs, us = run(p)
 
     # z0 = 0.
-    depth = solver.z1 - z0
-    # depth = solver.integral_depth(solver.z1)
+    depth = p.z1 - z0
+    # depth = integral_depth(p.z1, p)
 
-    u_star = np.sqrt(depth * solver.g * solver.slope)
+    u_star = np.sqrt(depth * p.g * p.slope)
     m = zs > z0
-    u_mean = np.trapezoid(us[m] * solver.porosity(zs[m]), zs[m]) / depth
+    u_mean = np.trapezoid(us[m] * porosity(zs[m], p), zs[m]) / depth
 
-    print(f"{u_mean / u_star = :g}  |  {depth / solver.d_p = :g}")
+    print(f"{u_mean / u_star = :g}  |  {depth / p.d_p = :g}")
     f[i] = 8 * (u_star / u_mean)**2
-    xi[i] = depth / solver.d_p
+    xi[i] = depth / p.d_p
 
-    ax_u.plot(us / u_star, zs / solver.d_p)
+    ax_u.plot(us / u_star, zs / p.d_p)
 
     l_f.set_data(xi, f)
+    if not plt.fignum_exists(fig.number):
+        break
     for ax in [ax_u, ax_f]:
         ax.relim()
         ax.autoscale_view()

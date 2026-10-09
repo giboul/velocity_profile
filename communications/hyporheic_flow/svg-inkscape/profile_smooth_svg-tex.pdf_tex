@@ -1,6 +1,6 @@
 %% Creator: Inkscape 1.4.4 (1:1.4.4+202605061436+dcaf3e7d9e), www.inkscape.org
 %% PDF/EPS/PS + LaTeX output extension by Johan Engelen, 2010
-%% Accompanies image file 'profile_porous_overlap_svg-tex.pdf' (pdf, eps, ps)
+%% Accompanies image file 'profile_smooth_svg-tex.pdf' (pdf, eps, ps)
 %%
 %% To include the image in your LaTeX document, write
 %%   \input{<filename>.pdf_tex}
@@ -38,7 +38,7 @@
   \newcommand*\fsize{\dimexpr\f@size pt\relax}%
   \newcommand*\lineheight[1]{\fontsize{\fsize}{#1\fsize}\selectfont}%
   \ifx\svgwidth\undefined%
-    \setlength{\unitlength}{314.64566929bp}%
+    \setlength{\unitlength}{459.21259843bp}%
     \ifx\svgscale\undefined%
       \relax%
     \else%
@@ -50,12 +50,12 @@
   \global\let\svgwidth\undefined%
   \global\let\svgscale\undefined%
   \makeatother%
-  \begin{picture}(1,0.81081081)%
+  \begin{picture}(1,0.57407407)%
     \lineheight{1}%
     \setlength\tabcolsep{0pt}%
-    \put(0,0){\includegraphics[width=\unitlength,page=1]{profile_porous_overlap_svg-tex.pdf}}%
-    \put(0.60961632,0.60632838){\color[rgb]{0,0,0}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}\textbf{$h$}\end{tabular}}}}%
-    \put(0.86783064,0.39890399){\color[rgb]{0,0,0}\makebox(0,0)[lt]{\lineheight{1.25}\smash{\begin{tabular}[t]{l}\textbf{$u$}\end{tabular}}}}%
-    \put(0,0){\includegraphics[width=\unitlength,page=2]{profile_porous_overlap_svg-tex.pdf}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=1]{profile_smooth_svg-tex.pdf}}%
+    \put(0.76153169,0.51481396){\color[rgb]{0.39607843,0.39607843,0.39607843}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}\textbf{$h$}\end{tabular}}}}%
+    \put(0.95603801,0.18947477){\color[rgb]{0.39607843,0.39607843,0.39607843}\makebox(0,0)[rt]{\lineheight{1.25}\smash{\begin{tabular}[t]{r}\textbf{$u$}\end{tabular}}}}%
+    \put(0,0){\includegraphics[width=\unitlength,page=2]{profile_smooth_svg-tex.pdf}}%
   \end{picture}%
 \endgroup%
