@@ -1,0 +1,21 @@
+constants:
+  G: 9.81
+  KAPPA: 0.41
+  LAM: 0.015
+  A_STAR: 26.0
+  A_E: 180.0
+  B_E: 1.75
+
+variables:
+  RHO: 950.0
+  NU: 3.1e-6
+  SLOPE: 1.0e-2
+  D_P: 8.0e-3
+  EPS_B: 0.38
+  Z1: 0.03
+  Z0: -12e-3
+
+solver:
+  N_CELLS: 10000
+  REFINEMENT: 10.0
+  REG: 1.0e-12

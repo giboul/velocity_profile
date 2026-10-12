@@ -74,7 +74,7 @@ NU = 3.1e-6            # kinematic viscosity                  [m^2/s]
 SLOPE = 1.0e-2         # hydraulic gradient                   [-]
 D_P = 8.0e-3           # grain diameter                       [m]
 EPS_B = 0.38           # bulk (deep-bed) porosity             [-]
-Z1 = 0.03               # free surface                         [m]
+Z1 = 0.03              # free surface                         [m]
 Z0 = -12e-3            # bottom of the bed                    [m]
 
 # Solver settings
@@ -192,6 +192,13 @@ def mixing_length(z, u, p, engine=np):
 # ===========================================================================
 
 
+def motchalnov(z, u, p, engine=np):
+    h = p.d_p
+    theta = 0.15 * (1.0 + engine.tanh(h-z)) / 2
+    alpha = 0.35 * (1.0 + engine.tanh(h-z)) / 2
+    return p.rho * (1 + theta)**2 * alpha/(1-alpha) * u**2
+
+
 def stresses(z, u, du, p, engine=np):
     """(tau_v, tau_t, tau_d) -- viscous, turbulent and dispersive."""
     eps = porosity(z, p, engine=engine)
@@ -201,6 +208,7 @@ def stresses(z, u, du, p, engine=np):
     tau_t = p.rho * eps * ell**2 * engine.sqrt(du * du + p.reg) * du
     tau_d = p.rho * p.lam * p.d_p / \
         (1.0 - p.eps_b) * (1.0 - eps) * eps * u * du
+    # tau_d = motchalnov(z, u, p, engine=engine)
     return tau_v, tau_t, tau_d
 
 
