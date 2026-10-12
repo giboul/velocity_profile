@@ -225,30 +225,6 @@ def source(z, u, du, p, engine=np):
 # ===========================================================================
 
 
-def graded_mesh(p, power=-4):
-    z0, z1 = p.z0, p.z1
-    z_norm = np.linspace(0, z1 - z0, num=p.n_cells+1)
-    z = z0 + z_norm * ((z_norm-1) / (z1 - z0-1))**power
-    domain = dx_mesh.create_interval(MPI.COMM_SELF, p.n_cells, [z0, z1])
-    domain.geometry.x[:, 0] = z
-
-    if True:
-        fig, axes = plt.subplots(ncols=2)
-        axes[0].plot(np.gradient(z), z)
-        axes[0].axline((0, z0), slope=0, ls="--")
-        axes[0].axline((0, z1), slope=0, ls="--")
-        axes[0].axline((2, 0), slope=np.inf, ls="--")
-
-        axes[1].plot(np.arange(z.size), z)
-        axes[1].plot([0, z.size], [z0, z1], "-.r")
-        axes[1].axline((0, z0), slope=0, ls="--")
-        axes[1].axline((0, 0.), slope=0, ls=":")
-        axes[1].axline((0, z1), slope=0, ls="--")
-        plt.show()
-
-    return domain
-
-
 def uniform_mesh(p):
     return dx_mesh.create_interval(MPI.COMM_SELF, p.n_cells, [p.z0, p.z1])
 
@@ -525,11 +501,21 @@ def plot_profile(r):
 
     # 4. the pointwise residual of the strong form, scaled by the driving
     #    force so that 100 = 100% off (see `Result.momentum_error`)
-    axes[3].fill_betweenx(zs, np.gradient(zs) * 1e3, alpha=0.3)
-    axes[3].set_xlabel("Cell size [mm]")
-    axes[3].set_xlim(0, None)
 
     ax_err = axes[3].twiny()
+    ax_err.xaxis.tick_bottom()
+    ax_err.xaxis.set_label_position("bottom")
+    axes[3].xaxis.tick_top()
+    axes[3].xaxis.set_label_position("top")
+
+    fill_color = axes[3].fill_betweenx(
+        zs, np.gradient(zs), alpha=0.3).get_fc()
+    fill_color[:, -1] = 1.
+    axes[3].set_xlabel("Cell size [m]", c=fill_color)
+    axes[3].set_xlim(0, None)
+    for t in axes[3].xaxis.get_ticklabels():
+        t.set_color(fill_color)
+
     m = 4
     ax_err.plot(100 * r.momentum_error()[m:-m], zs[m:-m], "-k", mfc="none")
     ax_err.set_xlabel(

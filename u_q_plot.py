@@ -8,7 +8,7 @@ from momentum_ODE_solver import Parameters, porosity
 p = Parameters(
     rho=1000.0,
     nu=1.0e-6,
-    slope=0.1e-2,
+    slope=0.1e-3,
     d_p=8.0e-3,
     eps_b=0.38,
     z0=-5.0e-1,
@@ -16,9 +16,9 @@ p = Parameters(
     n_cells=10_000,
     lam=0.,
 )
-num = 10
+num = 20
 
-xi = np.logspace(np.log10(0.6), 6, num=num)
+xi = np.logspace(1e-5, 2, num=num)
 u_star = np.full(num, np.nan, dtype=np.float64)
 q_star = np.full(num, np.nan, dtype=np.float64)
 
@@ -65,15 +65,17 @@ for i, xii in enumerate(xi):
     except RuntimeError:
         break
 
-    q = np.trapezoid(r.u * porosity(r.z, p), r.z)
-    u_mean = (r.u * porosity(r.z, p))[p.z1 > p.z0].mean()
+    m = r.z > r.ze08
+
+    q = np.trapezoid(r.u[m] * porosity(r.z, p)[m], r.z[m])
+    u_mean = (r.u * porosity(r.z, p))[m].mean()
 
     u_star[i] = u_mean / np.sqrt(p.g * p.slope * p.d_p)
     q_star[i] = q / np.sqrt(p.g * p.slope * p.d_p**3)
     print(
         f"{u_star[i] = :.3e}   {q_star[i] = :.3e} | e = {r.total_momentum_error():.3g} %")
 
-    ax_u.plot(r.u, r.z)
+    ax_u.plot(r.u, r.z, c=plt.cm.coolwarm((xii-xi.min())/(xi.max()-xi.min())))
     l_f.set_data(q_star, u_star)
     for ax in [ax_u, ax_f]:
         ax.relim()
