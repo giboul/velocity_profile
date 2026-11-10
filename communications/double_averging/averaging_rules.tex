@@ -493,6 +493,8 @@ Which leads to the final expression.
 
 $$\boxed{\langle\bm\nabla^2\bm{\bar u}\rangle_v = \underbrace{\epsilon\nabla^2\langle\bm{\bar u}\rangle_f}_\text{Brinkman correction} + \underbrace{\nabla\langle\bm{\bar u}\rangle_f\cdot\nabla\epsilon + \langle\bm{\bar u}\rangle_f\nabla^2\epsilon}_{\text{Porosity heterogeneity}} + \underbrace{\frac{1}{V}\int_{\mathcal S_s}\nabla\tilde{\bm u}\cdot \bm n~\mathrm dA}_{\text{Contribution to the drag force density }\bm{\bar f}}.}$$
 
+In the solution, this contribution to the momentum equation turns out to be very small.
+
 \subsubsection{Drag force density}
 
 The contribution of the fluctuations of the pressure and of the laplacian can be combined into a single term.
@@ -507,12 +509,12 @@ $$\bm\sigma = \mu\nabla\bm u - p.$$
 
 \paragraph{Closure of the drag force density}
 
-To have a second-order closure, we can use Ergun's equation and take the Forchheimer
-parametrisation \citep{W1996}:
+To have a second-order closure, we can use Ergun's equation and take the Forchheimer parametrisation \citep{W1996}:
 
 $$\bm{ f} = \overbrace{-\underbrace{\frac{\epsilon\mu}{K}\langle\bm u\rangle_f}_{\text{Darcy}} - \underbrace{\frac{\varrho\epsilon^2c}{\sqrt{K}}\langle\bm u\rangle_f\left|\langle\bm u\rangle_f\right|}_{\text{Forchheimer correction}}}^{\text{Ergun's drag force density}}.$$
 
-which is already a space-averaged form. Time-averaging this form and decomposing the velocity ${\bm u = \bm{\bar u} + \bm u'}$ yields \citep{G2000}:
+which is already a space-averaged form.
+Time-averaging this form and decomposing the velocity ${\bm u = \bm{\bar u} + \bm u'}$ yields \citep{G2000}:
 
 $$\bm{\bar f} = -\frac{\epsilon\mu}{K}\langle\bm{\bar u}\rangle_f - \frac{\varrho\epsilon^2c}{\sqrt{K}}\overline{\langle\bm u\rangle_f\left|\langle\bm u\rangle_f\right|},$$
 
