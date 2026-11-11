@@ -213,7 +213,14 @@ def stresses(z, u, du, p, engine=np):
 
 
 def drag(e, u, p, engine=np):
-    """Ergun resistance eps*fbar: Kozeny-Carman plus Forchheimer."""
+    """Ergun drag density fbar (multiply by eps for the momentum balance).
+
+    fbar = -mu*eps/K_KC * u - B_E*(1-eps)/d_p * rho*|u|*u, with the
+    Kozeny-Carman permeability K_KC = d_p^2 eps^3 / (A_E (1-eps)^2).  This
+    is the middle form of Rousseau & Ancey (2022) eq. 2.8; it gives Darcy's
+    law for the superficial velocity, eps*u_SSL = g*i*K_KC/nu.  (Their
+    printed right-hand side has one power of eps fewer.)
+    """
     return (
         - p.A_E * (1.0 - e)**2 / (e**2 * p.d_p**2) * p.rho * p.nu * u
         - p.B_E * (1.0 - e) / p.d_p * p.rho * engine.sqrt(u * u + p.reg) * u
@@ -403,9 +410,14 @@ class Result(Parameters):
         self.ell = mixing_length(self.z, self.u, self)     # mixing length [m]
         self.Z = integral_depth(self.z, self)              # smoothed height
 
-        water = self.z > -self.ze08                        # above the bed
-        self.u_mean = self.u[water].mean()                 # [m/s]
-        self.q = np.trapezoid(self.u[water] * self.e[water], self.z[water])
+        # Above the conventional bed top z(eps = 0.8), the same level that
+        # `depth` starts from.  Integrals, not node means: the mesh is graded,
+        # so a plain mean over-weights the refined cells at the interface.
+        water = self.z >= self.ze08
+        self.q = np.trapezoid(
+            self.u[water] * self.e[water], self.z[water])  # [m^2/s]
+        self.u_mean = np.trapezoid(
+            self.u[water], self.z[water]) / self.depth  # [m/s]
         self.froude = self.u_mean / np.sqrt(self.g * self.depth * self.slope)
 
     def momentum_error(self, relative=True):

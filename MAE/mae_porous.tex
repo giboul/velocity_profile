@@ -1,0 +1,440 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,bm,booktabs,graphicx,xcolor,hyperref,enumitem}
+\hypersetup{colorlinks,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\newcommand{\bu}{\bm{u}}
+\newcommand{\bU}{\bm{U}}
+\newcommand{\btau}{\bm{\tau}}
+\newcommand{\blam}{\bm{\lambda}}
+\newcommand{\hlam}{\hat{\bm{\lambda}}}
+\newcommand{\grad}{\operatorname{\mathbf{grad}}}
+\newcommand{\dvg}{\operatorname{div}}
+\newcommand{\Li}{\operatorname{Li}}
+\newcommand{\avg}[1]{\langle #1\rangle}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\Rp}{R_p}
+\newcommand{\Rop}{R_{1p}}
+\newcommand{\remark}[1]{\par\smallskip\noindent\fcolorbox{gray!40}{gray!6}{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{\small #1}}\par\smallskip}
+\setlength{\parskip}{3pt}
+\title{Matched asymptotic expansions for shallow turbulent flows:\\
+from Richard, Couderc \& Vila (2023) to permeable, rough beds}
+\author{Derivation notes}
+\date{11 November 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent Part~\ref{sec:R} re-derives the depth-averaged model of Richard, Couderc \& Vila (2023, \emph{J.\ Fluid Mech.} 954, A24; hereafter RCV) by matched asymptotic expansions. Parts~\ref{sec:gen}--\ref{sec:disp} redo the derivation over a permeable bed described by the double-averaged equations of Rousseau \& Ancey (2022, \emph{J.\ Fluid Mech.} 941, A51; hereafter RA): first with a null Reynolds stress in the bed, then with the Li \& Sawamoto mixing length, then with the dispersive stress. The main result is structural: \emph{if the bed and its roughness layer are thin compared with the depth, all of the bed physics is confined to the inner layer and enters the depth-averaged model only through two constants of an inner boundary-value problem}, $\Rp$ and $\Rop$, which replace RCV's $R$ and $R_1$. Everything in the outer layer, the matching logic and the structure of the final system (mass, momentum, enstrophy) is unchanged. What changes from step to step is the inner problem and therefore $\Rp(d^+)$ and $\Rop(d^+)$, which I compute numerically. Every intermediate result of RCV that is quoted here was re-derived symbolically (1-D) or numerically and agrees with the paper; two points where I found something worth flagging are marked in grey boxes.
+\end{abstract}
+
+\tableofcontents
+
+%==========================================================
+\section{Richard, Couderc \& Vila (2023): the smooth-bed derivation}\label{sec:R}
+%==========================================================
+\emph{A note on the request.} RCV treat the \emph{smooth} turbulent case; there is no roughness in that paper. Roughness enters here only through the permeable-bed parts (the roughness layer of RA), where it turns out to be handled by the same machinery.
+
+\subsection{Governing equations and closure}
+A turbulent flow runs down a plane inclined at $\theta$; $Oz$ is normal to the bed and $\bm g=g(\sin\theta\cos\beta,\sin\theta\sin\beta,-\cos\theta)$. Reynolds-averaged mass and momentum:
+\begin{equation}
+\dvg\bm v=0,\qquad \rho\Big(\partial_t\bm v+\dvg(\bm v\otimes\bm v)\Big)=\rho\bm g-\grad p+\dvg\btau,\qquad \btau=2\rho(\nu+\nu_T)\bm D,
+\end{equation}
+with Prandtl's mixing length, Van Driest damping and the Nezu--Rodi free-surface reduction (wake neglected):
+\begin{equation}\label{eq:Lm}
+\nu_T=\sqrt2\,L_m^2\sqrt{\bm D:\bm D},\qquad L_m=\kappa z\big(1-e^{-z^+/A^+}\big)\sqrt{1-z/h},\qquad z^+=zu_b/\nu,\ u_b=\sqrt{\tau_b/\rho}.
+\end{equation}
+Boundary conditions: $\bm v=0$ at $z=0$; kinematic condition $w(h)=\partial_th+u(h)\partial_xh+v(h)\partial_yh$; stress-free surface.
+
+\subsection{Scalings}
+With $\varepsilon=h_N/L\ll1$, horizontal velocities scaled by $u_N$, $w$ by $\varepsilon u_N$, $p$ by $\rho g h_N$, shear stresses by $\rho\kappa^2u_N^2$, normal stresses by $\varepsilon\rho\kappa^2u_N^2$, $\nu_T$ by $\kappa^2h_Nu_N$, $L_m$ by $\kappa h_N$, define
+\begin{equation}
+\eta=\frac{\nu}{\kappa^2h_Nu_N}=\varepsilon^{2+m}\ (m>0),\qquad \lambda=\frac{\sin\theta}{\kappa^2F^2},\qquad \blam=\lambda(\cos\beta,\sin\beta),\qquad s=z/h .
+\end{equation}
+\textbf{Outer (shallow-water) scaling.} Dropping primes, $\nu_{\rm eff}=\eta+\nu_T$ and, because $z^+=z\sqrt{\tau_b}/(\eta\kappa)$ is huge, the Van Driest factor is 1:
+\begin{equation}\label{eq:outer}
+\nu_{\rm eff}=z^2(1-s)\,\|\partial_z\bu\|+O(\varepsilon^2),\qquad
+\partial_z\btau_{sh}=-\blam+\frac{\varepsilon}{\kappa^2}\Big[\partial_t\bu+\dvg(\bu\otimes\bu)+\partial_z(w\bu)+\frac{1}{F^2}\grad p\Big]+O(\varepsilon^2),
+\end{equation}
+$\partial_zp=-\cos\theta+O(\varepsilon)$, $p(h)=O(\varepsilon)$, $\btau_{sh}(h)=O(\varepsilon^2)$, with $\bu=(u,v)$ and $\btau_{sh}=(\tau_{xz},\tau_{yz})$. The no-slip condition cannot be imposed in this scaling.
+
+\textbf{Inner (viscous) scaling.} $\tilde z=z/\eta$, $\tilde w=w/\eta$, other variables unchanged. Then $\tilde\nu_{\rm eff}=1+\tilde\nu_T$ and
+\begin{equation}\label{eq:inner}
+\partial_{\tilde z}\tilde\btau_{sh}=O(\eta),\qquad \partial_{\tilde z}\tilde p=O(\eta),\qquad
+\tilde\btau_{sh}=\Big[1+\tilde z^2(1-s)\big(1-e^{-\xi/A}\big)^2\|\partial_{\tilde z}\tilde\bu\|\Big]\partial_{\tilde z}\tilde\bu,
+\end{equation}
+with $\xi=2\sqrt{\tilde\tau_b}\,\tilde z=2\kappa z^+$ and $A=2\kappa A^+$.
+
+Every variable is expanded as $X=X_0+\varepsilon X_1+O(\varepsilon^2)$.
+
+\subsection{Order 0}
+\textbf{Outer.} Integrating \eqref{eq:outer} with $\btau_{sh}(h)=0$:
+\begin{equation}
+\btau^{(0)}_{sh}=\blam h(1-s).
+\end{equation}
+The constitutive law gives $z^2(1-s)\|\partial_z\bu_0\|\partial_z\bu_0=\blam h(1-s)$, i.e.\ $\|\partial_z\bu_0\|=\sqrt{\lambda h}/z$: the free-surface factor $(1-s)$ of $L_m$ cancels the linear stress decrease exactly, which is why the outer profile is a pure logarithm,
+\begin{equation}
+\bu_0=\bu_0(h)+\sqrt{\lambda h}\,\hlam\ln s .
+\end{equation}
+\textbf{Inner.} $\tilde\btau^{(0)}_{sh}$ is constant, equal to its outer limit $\blam h$; so $\tilde\tau_b=\lambda h$. Solving the quadratic constitutive law for $\|\partial_{\tilde z}\tilde\bu_0\|$ (secant form, regular at $\xi=0$):
+\begin{equation}\label{eq:G0}
+\frac{\partial\tilde\bu_0}{\partial\tilde z}=\frac{2\blam h}{1+\sqrt{\Delta}},\quad \Delta=1+\xi^2(1-e^{-\xi/A})^2
+\ \Longrightarrow\
+\tilde\bu_0=\sqrt{\lambda h}\,\hlam\,G_0(\xi),\quad G_0(\xi)=\int_0^\xi\frac{\dd\xi'}{1+\sqrt{\Delta}}.
+\end{equation}
+Since $\int_0^\xi\dd\xi'/(1+\sqrt{1+\xi'^2})=\ln(\xi+\sqrt{1+\xi^2})-\xi/(1+\sqrt{1+\xi^2})$,
+\begin{equation}\label{eq:G0asym}
+\begin{gathered}G_0(\xi)=-\frac{\xi}{1+\sqrt{1+\xi^2}}+\ln\big(\xi+\sqrt{1+\xi^2}\big)+R(\xi)\ \xrightarrow[\xi\to\infty]{}\ \ln 2\xi-1+R,\\
+R=\int_0^\infty\!\Big[\frac{1}{1+\sqrt\Delta}-\frac{1}{1+\sqrt{1+\xi^2}}\Big]\dd\xi .\end{gathered}
+\end{equation}
+Near the wall $G_0\simeq\xi/2$, i.e.\ $u^+=z^+$.
+
+\textbf{Matching.} Overlap at $s=b\sqrt\eta$, i.e.\ $\xi=2b\sqrt{\lambda h^3}/\sqrt\eta$. Equating $\bu_0(s=b\sqrt\eta)$ and $\tilde\bu_0(\xi\to\infty)$, the $\ln b$ cancels and
+\begin{equation}
+\bu_0(h)=\sqrt{\lambda h}\,\hlam\,\big(R-1+\ln2+\ln M-\ln\eta\big),\qquad M=2\sqrt{\lambda h^3},
+\end{equation}
+with matching error $O(\sqrt\eta)=o(\varepsilon)$ because $m>0$.
+
+\textbf{Second small parameter.} $\mu=-2/\ln\eta=2/\ln(\kappa^2Re)$, with $\varepsilon\ll\mu^p$ for all $p$. Taking $\bu_0=O(1)$ requires $\lambda=\mu^2\lambda_0$, $\lambda_0=O(1)$ (hence $\sin\theta=O(\mu^2)$). Then
+\begin{equation}\label{eq:u0}
+\bu_0=\sqrt{\lambda_0h}\,\hlam\,\big[2+\mu(Q+\ln s)\big],\qquad Q\equiv R-1+\ln2+\ln M,
+\end{equation}
+\begin{equation}\label{eq:U0}
+\bU_0=\avg{\bu_0}=\sqrt{\lambda_0h}\,\hlam\,C(\mu),\qquad C(\mu)=2+\mu(R-2+\ln2+\ln M).
+\end{equation}
+In dimensional 1-D form, $u_0/u_b=\kappa^{-1}\ln z^++B$ with
+\begin{equation}\label{eq:B}
+\kappa B=R-1+2\ln2+\ln\kappa .
+\end{equation}
+\emph{Check.} For $\kappa=0.41$, $A^+=26$ I obtain $R=2.6689$, $B=5.277$ (RCV: 2.67, 5.28).
+
+The vertical velocity $w_0$ follows from continuity and the kinematic condition (RCV eq.\ 3.32), and $p_0=(h-z)\cos\theta$, $\tilde p_0=h\cos\theta$.
+
+\subsection{Order 1: outer layer}
+At $O(\varepsilon)$, \eqref{eq:outer} reads $\kappa^2\partial_z\btau^{(1)}_{sh}=\partial_t\bu_0+\dvg(\bu_0\otimes\bu_0)+\partial_z(w_0\bu_0)+F^{-2}\grad p_0$. Integrating from $h$ (where $\btau^{(1)}_{sh}=0$) and using the kinematic condition to absorb the Leibniz boundary terms,
+\begin{equation}\label{eq:A2}
+\kappa^2\btau^{(1)}_{sh}=\partial_t\!\int_h^z\!\bu_0\,\dd z+\dvg\!\int_h^z\!\bu_0\otimes\bu_0\,\dd z+w_0\bu_0+\frac{1}{F^2}\grad\!\int_h^z\!p_0\,\dd z ,
+\end{equation}
+with $\partial_th=-\dvg(h\bU_0)$. Inserting \eqref{eq:u0} gives
+\begin{equation}\label{eq:tau1}
+\btau^{(1)}_{sh}=\frac{\lambda_0h}{\kappa^2}\hlam(\hlam\cdot\grad h)\big[1-s+\mu T_1(s)+\mu^2T_2(s)\big]+\frac{h}{\kappa^2}\frac{\cos\theta}{F^2}\grad h\,(s-1).
+\end{equation}
+I re-derived $T_1,T_2$ symbolically for a \emph{general} $Q(h)$ (this generality is needed in Part~\ref{sec:gen}). With
+\begin{equation}
+q_1\equiv h\,\frac{\dd Q}{\dd h},\qquad P\equiv \frac Q2+q_1,
+\end{equation}
+the result is remarkably compact:
+\begin{equation}\label{eq:T}
+T_1(s)=(1-s)(2P-1)+\tfrac12 s\ln s,\qquad
+T_2(s)=(1-s)\big(P^2-P-\tfrac74\big)+s\ln s\big(\tfrac P2-\tfrac74+\tfrac12\ln s\big).
+\end{equation}
+For the smooth bed $q_1=3/2$ (from $\ln M\propto\frac32\ln h$), so $2P=R+2+\ln2+\ln M$, and \eqref{eq:T} reproduces RCV (A4)--(A5) exactly.
+
+\textbf{Linearised constitutive law.} Write $\bm\tau=\mathcal F(\|\partial_z\bu\|)\,\partial_z\bu/\|\partial_z\bu\|$. Perturbing about $\bu_0$, the component of $\partial_z\bu_1$ parallel to $\hlam$ is governed by the \emph{tangent} compliance $1/\mathcal F'$ and the normal component by the \emph{secant} compliance $\|\partial_z\bu_0\|/\mathcal F$. In the outer layer $\mathcal F=z^2(1-s)\|\partial_z\bu\|^2$, so $\mathcal F'=2\,\mathcal F/\|\partial_z\bu\|$, and with $\|\partial_z\bu_0\|=\sqrt{\lambda h}/z$:
+\begin{equation}\label{eq:du1}
+\frac{\partial\bu_1}{\partial z}=\frac{1}{2\kappa^2}\sqrt{\frac{\lambda_0}{h}}\,\hlam(\hlam\cdot\grad h)\frac{1-s+\mu T_1+\mu^2T_2}{\mu s(1-s)}
++\frac{1}{2\kappa^2}\sqrt{\frac{\lambda_0}{h}}\frac{\cos\theta}{\lambda_0F^2}\frac{\hlam(\hlam\cdot\grad h)}{\mu s}
+-\frac{1}{\kappa^2}\sqrt{\frac{\lambda_0}{h}}\frac{\cos\theta}{\lambda_0F^2}\frac{\grad h}{\mu s},
+\end{equation}
+(RCV A14). Its integral $\bu_1=\bu_1(h)+\int_1^s(\cdot)\,\dd s$ contains $\Li_2(1-s)$, $\Li_2(s)$, $\Li_3(s)$ and $\zeta(3)$ (RCV A15) and diverges like $\ln s/\mu$ as $s\to0$.
+
+\subsection{Order 1: inner layer and matching}
+In the inner layer $\partial_{\tilde z}\tilde\btau^{(1)}_{sh}=0$, so $\tilde\btau^{(1)}_{sh}=\btau^{(1)}_{sh}(0)$: \emph{the inner order-1 problem is the linear response of the inner solution to a perturbation of the wall stress}. Split $\btau^{(1)}_{sh}(0)$ into its part along $\hlam$ and its normal part:
+\begin{itemize}[nosep]
+\item the parallel part is integrated with the tangent compliance $1/\sqrt\Delta$:
+$\displaystyle G_1(\xi)=\int_0^\xi\frac{\dd\xi'}{\sqrt{\Delta}}\ \xrightarrow[\xi\to\infty]{}\ \ln2\xi+R_1,\quad R_1=\int_0^\infty\Big[\frac1{\sqrt\Delta}-\frac1{\sqrt{1+\xi^2}}\Big]\dd\xi$;
+\item the normal part is a rigid rotation of the order-0 profile, integrated with the secant compliance $2/(1+\sqrt\Delta)$, i.e.\ with $G_0$.
+\end{itemize}
+Hence (RCV A28 rewritten)
+\begin{equation}\label{eq:u1inner}
+\tilde\bu_1=\frac{\hlam\big(\hlam\cdot\btau^{(1)}_{sh}(0)\big)}{2\mu\sqrt{\lambda_0h}}\,G_1(\xi)+\frac{\btau^{(1)}_{sh}(0)-\hlam\big(\hlam\cdot\btau^{(1)}_{sh}(0)\big)}{\mu\sqrt{\lambda_0h}}\,G_0(\xi)+O(\mu^2).
+\end{equation}
+\textbf{Matching.} At the overlap $\ln s=\ln b-1/\mu$ and $\ln2\xi=\ln b+\ln(2M)+1/\mu$. Writing the outer solution as $s\to0$ as $\bu_1\sim\bu_1(h)+\bm c\ln s+\bm c_0$, the coefficient $\bm c$ coincides automatically with the inner coefficient of $\ln\xi$, and matching the constants gives (1-D, parallel part)
+\begin{equation}\label{eq:u1h}
+u_1(h)=c\Big(\frac2\mu+\ln2+\ln M+R_1\Big)-c_0,\qquad c_0=-\frac{a}{\mu}\int_0^1 g\,\dd s=\frac{a\pi^2}{12}+O(a\mu),
+\end{equation}
+where $a=\sqrt{\lambda_0h}\,h_x/(2\kappa^2)$ and $g=\mu\ln s/[2(1-s)]+\mu^2\ln s\,(\tfrac P2-\tfrac74+\tfrac12\ln s)/(1-s)$ is the integrable part of \eqref{eq:du1}. This is RCV (A31); the normal part brings $R$ instead of $R_1$, which is why RCV's third line contains $R_1-2R$.
+
+\remark{\textbf{Flag 1 (convention on the damping function).} RCV evaluate the Van Driest factor with the order-0 wall stress, $\tilde\tau_b=\lambda h$, also at order 1. The order-1 inner response then uses the tangent compliance with the damping \emph{frozen}, which yields $R_1=4.82$. If the damping instead follows the corrected wall stress (as eq.~\eqref{eq:Lm} literally says), the inner solution is $u=u_bf(z^+)$ and its exact derivative with respect to $u_b$ gives $\partial u/\partial u_b\to\kappa^{-1}[\ln(4\kappa z^+)+R]$: $R_1$ is replaced by $R$ and $\alpha=R_1-R+1$ becomes $1$. Both are legitimate modelling choices (whether turbulence damping adapts instantly to the wall stress); they give the same structure but different relaxation coefficients. Part~\ref{sec:gen} keeps both options.}
+
+\subsection{Depth-averaged quantities}
+Using integration by parts ($\int_0^1 f\,\dd s=f(1)-\int_0^1 s f'\dd s$) and $\int_0^1 s\ln^ks/(1-s)\,\dd s=(-1)^kk!\,[\zeta(k+1)-1]$:
+\begin{align}
+U_1&=a\Big[\frac2{\mu^2}+\frac1\mu\big(R_1-1+\ln2+\ln M+2T_1(0)\big)-\frac12+2T_2(0)+T_1(0)(R_1-1+\ln2+\ln M)\Big]\nonumber\\
+&\quad-a\,\Pi\Big[\frac2{\mu^2}+\frac1\mu(R_1-1+\ln2+\ln M)\Big]+O(a\mu),\qquad \Pi=\frac{\cos\theta}{\lambda_0F^2}\quad\text{(1-D form of RCV A33)},\\
+\varphi^{(0)}&=\frac1{h^2}\avg{(\bu_0-\bU_0)\otimes(\bu_0-\bU_0)}=\frac{\mu^2\lambda_0}{h}\,\hlam\otimes\hlam,\\
+\varphi^{(1)}&=\frac{\lambda_0h_x}{\kappa^2h}\big[1-\Pi+\mu(2P-\zeta(3))\big]+O(\mu^2)\qquad\text{(1-D form of RCV 4.11)}.
+\end{align}
+The enstrophy tensor $\varphi$ is the only new unknown: $\avg{\bu\otimes\bu}=\bU\otimes\bU+h^2\varphi$, and the cubic moment $\avg{\bu^*\otimes\bu^*\otimes\bu^*}=O(\mu^3)$ is dropped (Teshukov's weakly-sheared approximation).
+
+\subsection{Momentum equation and inversion}
+Averaging the momentum equation and using $\btau^{(0)}_{sh}(0)=h\blam$:
+\begin{equation}
+\partial_t(h\bU)+\dvg(h\bU\otimes\bU+h^3\varphi)+\grad\Big(\frac{h^2}{2F^2}\cos\theta\Big)=-\kappa^2\btau^{(1)}_{sh}(0)+O(\varepsilon).
+\end{equation}
+The three quantities $\btau^{(1)}_{sh}(0)$, $\bU_1$, $\varphi^{(1)}$ are all linear in $\hlam\cdot\grad h$ and $\cos\theta\,\grad h/F^2$; eliminating these two gradients expresses the wall stress in terms of $\bU_1$ and $\varphi^{(1)}$, which are then replaced by relaxation differences ($\varepsilon\bU_1=\bU-\bU_0$, etc.). In 1-D I find
+\begin{equation}\label{eq:c1c2}
+\tau^{(1)}(0)=c_1\,\frac{\mu^2}{C^2}\,2U_0U_1+c_2\,h^2\varphi^{(1)},\qquad c_1=1-\frac{\alpha_1}{2}\mu+O(\mu^2),\quad c_2=-\frac{\alpha_2}{2}\mu+O(\mu^2),
+\end{equation}
+\begin{equation}\label{eq:alphas}
+\alpha=R_1-R+1,\qquad \alpha_2=\frac{1}{2(\zeta(3)-1)},\qquad \alpha_1=\alpha-\alpha_2 ,
+\end{equation}
+in agreement with RCV (4.12) at this order ($\alpha=3.155$, $\alpha_2=2.475$, $\alpha_1=0.680$ recomputed). The perpendicular parts, which do not appear in 1-D, split $c_2$ into RCV's $-\alpha\,\mathrm{tr}\,\varphi$ and $+\alpha_1\varphi\cdot\hlam$ terms.
+
+\remark{\textbf{Flag 2 (what is asymptotically fixed).} The elimination determines $c_1$ and $c_2$ unambiguously to $O(\mu)$. RCV write the result in a factorised form, $(1-\alpha_1\mu/C)$ and $-(\alpha/\kappa^2)(\kappa-\alpha_1\mu/C)(\kappa\mu/C)+\alpha_1\mu/C$, which also contains $O(\mu^2)$ pieces. The strict $O(\mu^2)$ coefficients obtained from the same elimination are different and large (they contain $P^2/(\zeta(3)-1)^2$ terms), so I read the $O(\mu^2)$ part of the factorised form as a resummation choice rather than a derived term. Also, in (4.12) the factor printed as $(\kappa-\alpha_1\mu/C)$ is consistent with (4.22) only if read as $\kappa(1-\alpha_1\mu/C)$. Nothing below depends on this: I carry coefficients to the order that is fixed.}
+
+With $C_f=\mu^2\kappa^2/C^2(\mu)$ and $\hat{\bm g}=g\sin\theta(\cos\beta,\sin\beta)$, the dimensional system is RCV (4.26)--(4.28):
+\begin{gather}
+\partial_th+\dvg(h\bU)=0,\\
+\partial_t(h\bU)+\dvg(h\bU\otimes\bU+h^3\varphi)+\grad\Big(\frac{gh^2}{2}\cos\theta\Big)=\Big(1-\frac{\alpha_1}{\kappa}\sqrt{C_f}\Big)(\hat{\bm g}h-C_f\|\bU\|\bU)\nonumber\\
+\qquad+\alpha(\kappa-\alpha_1\sqrt{C_f})h\sqrt{C_f}\Big(h\,\mathrm{tr}\varphi-\frac{\hat g}{\kappa^2}\Big)\frac{\hat{\bm g}}{\hat g}
+-\kappa\alpha_1h\sqrt{C_f}\Big(h\varphi\cdot\frac{\hat{\bm g}}{\hat g}-\frac{\hat{\bm g}}{\kappa^2}\Big),\label{eq:mom}
+\end{gather}
+plus the enstrophy equation below. The friction law is explicit:
+\begin{equation}\label{eq:Cf}
+\frac{\kappa}{\sqrt{C_f}}=R-2+2\ln2+\ln\kappa+\ln\frac{\sqrt{gh^3\sin\theta}}{\nu}.
+\end{equation}
+
+\subsection{Enstrophy equation}
+Forming $\bu\otimes$(momentum)$+$(momentum)$\otimes\bu$, averaging, subtracting $\bU\otimes$(averaged momentum)$+\ldots$ and dropping $O(\mu^3)$ gives
+\begin{equation}
+\partial_t(h\varphi)+\dvg(h\varphi\otimes\bU)-2h\varphi\,\dvg\bU+\grad\bU\cdot h\varphi+h\varphi\cdot(\grad\bU)^{\rm T}
+=\frac{\kappa^2}{\varepsilon h^2}\big[\bU\otimes\btau_{sh}(0)+\btau_{sh}(0)\otimes\bU-2\bm W\big],
+\end{equation}
+with the dissipation tensor $\bm W=\int_0^h\nu_{\rm eff}\,\partial_z\bu\otimes\partial_z\bu\,\dd z$. $\bm W$ is not integrated directly: $\bm W_0=\tfrac h2(\bU_0\otimes\blam+\blam\otimes\bU_0)$, and $\bm W_1$ is \emph{deduced} from the $O(\varepsilon^0)$ part of the averaged second-moment equation (RCV B4) evaluated with order-0 fields. I redid this in 1-D: $2W_1-2h\lambda U_1=e_1\frac{4\mu^2}{C^2}U_0^2U_1+e_2\,2U_0h^2\varphi^{(1)}$ with $e_1=1-\alpha\mu/2+O(\mu^2)$ and $e_2=O(\mu^2)$, consistent with RCV (B11), and the relaxation form (4.28) follows with $\alpha_2$ and $\alpha$.
+
+%==========================================================
+\section{Permeable bed: the general framework}\label{sec:gen}
+%==========================================================
+\subsection{Double-averaged equations (RA)}
+Let $n(z)$ be the porosity (RA's $\epsilon$; renamed to avoid a clash with the shallowness parameter), equal to $n_b$ in the bed and 1 in the free flow, with a roughness layer of thickness $\sim d_p$ in between. For the intrinsic double-averaged velocity $\bU$ (RA eq.\ 2.4) the shear-flow form of the momentum equation is
+\begin{equation}\label{eq:DANS}
+\partial_z\big[\tau_v+\tau_t+\tau_d\big]-\rho\nu\,n'\partial_zU+n f+\rho n\,g\sin\theta+\ldots=0,\qquad \tau_v=\rho\nu\,\partial_z(nU),
+\end{equation}
+where the dots are the unsteady, advective and pressure terms (of the same form as in RCV, weighted by $n$). The closures used below are
+\begin{align}
+\text{drag (Ergun):}\quad & nf=-\frac{A_E(1-n)^2}{n\,d_p^2}\rho\nu U-\frac{B_En(1-n)}{d_p}\rho|U|U,\quad A_E=180,\ B_E=1.75,\\
+\text{turbulent:}\quad & \tau_t=\rho n\,\ell_t^2|\partial_zU|\partial_zU,\\
+\text{dispersive:}\quad & \tau_d=\rho n\,\nu_d\,\partial_zU,\quad \nu_d=\lambda_d\,d_p\frac{1-n}{1-n_b}|U|,\quad \lambda_d=0.015.
+\end{align}
+The Kozeny--Carman permeability is $K=d_p^2n_b^3/[A_E(1-n_b)^2]$, so $\sqrt K\simeq0.031\,d_p$ for $n_b=0.4$. The linear drag is written as $n\bar f=-\rho\nu n^2U/K$, i.e.\ RA's middle form $\bar f=-\mu nU/K$, which gives Darcy's law for the superficial velocity, $nU_{\rm SSL}=gKi/\nu$ (RA 2.9). RA's printed right-hand side of (2.8) has one power of $n$ fewer, so it is not the same expression. The first version of these notes used that printed form. Correcting it changes $\Rp$ by at most $0.035$, because the Brinkman layer is thin.
+
+\subsection{Where the bed sits in the asymptotic structure}
+Let $\delta_\nu=\nu/u_*$. Define $d^+=d_pu_*/\nu$ and $Re_K=\sqrt Ku_*/\nu$ ($\simeq0.031\,d^+$). Assume
+\begin{equation}\label{eq:assump}
+\frac{\max(\delta_\nu,d_p)}{h}=O(\eta)\quad\text{(thin roughness layer)},\qquad d^+,\ Re_K\ \text{fixed as }\eta\to0 .
+\end{equation}
+In the inner layer (thickness $\delta_i=\max(\delta_\nu,d_p)$), compare each term with $\partial_z\tau\sim\rho u_*^2/\delta_i$:
+\begin{itemize}[nosep]
+\item gravity, pressure gradient, unsteadiness and advection: relative size $\delta_i/h=O(\eta)$, \emph{negligible} exactly as in RCV;
+\item Darcy drag over the inner layer: $\nu U/K$ vs $u_*^2/\delta_\nu$ gives $Re_K^{-2}=O(1)$: \emph{the drag enters the leading-order inner balance};
+\item deep-bed Darcy velocity: $U_{\rm SSL}=gK\sin\theta/\nu$, so $U_{\rm SSL}/u_*=Re_K^2\,\delta_\nu/h=O(\eta)$;
+\item subsurface and inner-layer volume flux relative to $hU$: $O(\eta)$, and $O(\eta\,h_s/h)$ for a bed of thickness $h_s$.
+\end{itemize}
+Consequences: (i) the outer equations, boundary conditions and solutions of Part~\ref{sec:R} are \emph{unchanged}; (ii) the depth-averaged mass equation is unchanged to $O(\eta)$; (iii) the outer coordinate may be measured from any level inside the roughness layer, because an $O(d_p)$ shift changes $\ln z$ by $O(d_p/z)$, which vanishes in the overlap; (iv) the inner problem changes, and it is quasi-steady and one-dimensional.
+
+\remark{\textbf{Range of validity.} Assumption \eqref{eq:assump} is \emph{large relative submergence}. RA's experiments and steep mountain streams have $h/d_p=O(1)$, outside the formal regime. The full-depth check of §\ref{sec:valid} shows that the error made is first order in $d_p/h$ and stays moderate: 5\% on the mean velocity at $h/d_p=3.75$, 1.6\% at $h/d_p=10$. A correction at $O(d_p/h)$ would require the roughness layer in the outer problem (porosity and drag there, depth-averaging weighted by $n$).}
+
+\subsection{The order-0 inner problem}
+In wall units ($z^+$, $u^+=U/u_*$, all stresses divided by $\rho u_*^2$), the leading-order inner balance is the steady, gravity-free version of \eqref{eq:DANS}:
+\begin{equation}\label{eq:innerP}
+\frac{\dd S}{\dd z^+}=n'\,\frac{\dd u^+}{\dd z^+}+\frac{A_E(1-n)^2}{n\,d^{+2}}u^++\frac{B_En(1-n)}{d^+}u^{+2},\qquad
+S=n\Big[1+\nu_d^++\ell_t^{+2}\Big|\frac{\dd u^+}{\dd z^+}\Big|\Big]\frac{\dd u^+}{\dd z^+}+n'u^+,
+\end{equation}
+with $u^+\to0$ in the bulk bed and $S\to1$ above the roughness layer. Solving the quadratic for the velocity gradient in secant form,
+\begin{equation}
+\frac{\dd u^+}{\dd z^+}=\frac{2T}{a+\sqrt{a^2+4\ell_t^{+2}|T|}},\qquad T=\frac{S-n'u^+}{n},\quad a=1+\nu_d^+ .
+\end{equation}
+Above the roughness layer $n=1$, $\nu_d=0$, $S=1$ and $\ell_t^+\to\kappa z^+$, so $u^+\to\kappa^{-1}\ln z^++B_p$. \textbf{Define}
+\begin{equation}\label{eq:Rp}
+\Rp\equiv\kappa B_p+1-2\ln2-\ln\kappa=\lim_{z^+\to\infty}\big[\kappa u^+-\ln(4\kappa z^+)+1\big],
+\end{equation}
+so that $\Rp=R$ for RCV's smooth wall. Since $\xi=2\kappa z^+$ and $\kappa u^+=G_0$, this is exactly the statement $G_0\to\ln2\xi-1+\Rp$. All geometric parameters scale with $d_p$, so $\Rp=\Rp(d^+;n_b,\ldots)$, and I define
+\begin{equation}
+\gamma\equiv\frac{\dd\Rp}{\dd\ln d^+}.
+\end{equation}
+
+\textbf{Order 0 then goes through verbatim} with $R\to\Rp$: $u_0(h)$, \eqref{eq:u0}, \eqref{eq:U0}, $C(\mu)=2+\mu(\Rp-2+\ln2+\ln M)$, the log law with $B_p$, and the explicit friction law
+\begin{equation}\label{eq:Cfp}
+\frac{\kappa}{\sqrt{C_f}}=\Rp(d^+)-2+2\ln2+\ln\kappa+\ln\frac{\sqrt{gh^3\sin\theta}}{\nu},\qquad d^+=\frac{d_p\sqrt{gh\sin\theta}}{\nu}.
+\end{equation}
+It stays \emph{explicit} because $d^+$ is built from $h$ and the slope. In the fully rough limit $\Rp\simeq c_r-\ln d^+$, and the viscosity cancels: $\kappa/\sqrt{C_f}=c_r-2+2\ln2+\ln\kappa+\ln(h/d_p)$.
+
+\subsection{The order-1 inner problem}
+The order-1 inner equations are again the linearisation of \eqref{eq:innerP} about the order-0 state, forced by $\btau^{(1)}_{sh}(0)$; the drag and dispersive terms make it a linear ODE rather than a quadrature, but the decomposition of \eqref{eq:u1inner} survives:
+\begin{itemize}[nosep]
+\item \emph{normal part}: all closures above are isotropic in the horizontal plane (drag $\propto U$ and $|U|U$, $\nu_d\propto|U|$, $\tau_t\propto|\partial_zU|\partial_zU$), so rotating the wall stress rigidly rotates the profile: response $G_0$, constant $\Rp$;
+\item \emph{parallel part}: response $G_1$ of the linearised problem with $\delta S\to1$ above the roughness layer and $\delta u\to0$ in the bed, and
+\begin{equation}
+\Rop\equiv\lim_{z^+\to\infty}\Big[2\kappa\frac{\delta u^+}{\delta S}-\ln(4\kappa z^+)\Big].
+\end{equation}
+\end{itemize}
+Two linearisations are possible (Flag~1):
+\begin{equation}\label{eq:R1p}
+\begin{gathered}\text{consistent:}\quad \Rop=\Rp+\gamma\ \ \Rightarrow\ \ \alpha_p=1+\gamma;\\
+\text{frozen damping:}\quad \Rop\ \text{from the ODE with the damping factor held fixed}.\end{gathered}
+\end{equation}
+The consistent identity follows from $u=u_*F(z^+;d^+)$: at fixed dimensional $z$, $\partial u/\partial u_*=F+z^+F_{z^+}+d^+F_{d^+}\to\kappa^{-1}[\ln(4\kappa z^+)+\Rp+\gamma]$. I checked it numerically: the linearised ODE and $\Rp+\gamma$ agree to four decimals.
+
+\textbf{Order-1 matching} is RCV's \eqref{eq:u1h} with $R_1\to\Rop$ for the parallel part and $R\to\Rp$ for the normal part.
+
+\subsection{What the $h$-dependence of $\Rp$ does to the outer order 1}
+In RCV, $Q=R-1+\ln2+\ln M$ depends on $h$ only through $\ln M$. Now $Q=\Rp(d^+)-1+\ln2+\ln M$ and $d^+\propto\sqrt h$, so
+\begin{equation}
+q_1=h\frac{\dd Q}{\dd h}=\frac32+\frac\gamma2 ,
+\end{equation}
+which enters $T_1$, $T_2$ through $P=Q/2+q_1$ in \eqref{eq:T}, and hence $U_1$, $\varphi^{(1)}$ and the reconstructed profile. Redoing the elimination \eqref{eq:c1c2} symbolically with general $(P,q_1,\Rp,\Rop)$, I find
+\begin{equation}
+c_1=1-\frac{\Rop-\Rp+1-\alpha_2}{2}\mu+O(\mu^2),\qquad c_2=-\frac{\alpha_2}{2}\mu+O(\mu^2),\qquad e_1=1-\frac{\Rop-\Rp+1}{2}\mu+O(\mu^2):
+\end{equation}
+\emph{$q_1$ drops out of every coefficient at the order that is asymptotically fixed.}
+
+\subsection{Result}
+\begin{quote}
+\emph{To the order of RCV's model, the depth-averaged system over a thin permeable rough bed is RCV (4.26)--(4.28) with}
+\begin{equation}\label{eq:map}
+R\to\Rp(d^+),\qquad \alpha\to\alpha_p=\Rop-\Rp+1,\qquad \alpha_1\to\alpha_p-\alpha_2,\qquad \alpha_2\ \text{unchanged},
+\end{equation}
+\emph{and $C_f$ given by \eqref{eq:Cfp}. The 3-D reconstruction (RCV 5.3) keeps its form in the outer layer; in the inner layer and inside the bed the profile is $u_*F(z^+;d^+)$ plus the order-1 response.}
+\end{quote}
+Each of the next three parts is therefore ``solve one inner problem''.
+
+%==========================================================
+\section{Step 2: null Reynolds stress in the bed}\label{sec:null}
+%==========================================================
+\subsection{Sharp interface: closed form}
+Take a plane interface at $z=0$, a homogeneous bed below with $\tau_t=\tau_d=0$, and RCV's damped mixing length measured from the interface above. Below, Brinkman--Darcy for the superficial velocity $u_D$ with effective viscosity $\nu_e=\beta_B\nu$ ($\beta_B=1$ Neale--Nader, $\beta_B=1/n_b$ Ochoa-Tapia--Whitaker):
+\begin{equation}
+\beta_B\,\nu\,u_D''=\frac{\nu}{K}u_D\ \Rightarrow\ u_D=u_s\,e^{z/\delta_B},\qquad \delta_B=\sqrt{\beta_BK}.
+\end{equation}
+Continuity of velocity and of shear stress at $z=0$ gives $\rho\beta_B\nu u_s/\delta_B=\tau_b$, i.e.\ a slip velocity
+\begin{equation}
+u_s^+=\frac{Re_K}{\sqrt{\beta_B}} .
+\end{equation}
+Above the interface the inner problem is RCV's with $u^+$ shifted by $u_s^+$ (the Van Driest layer is assumed to sit on the interface as on a wall). Therefore, exactly:
+\begin{equation}
+\boxed{\ \Rp=R+\frac{\kappa\,Re_K}{\sqrt{\beta_B}},\qquad \gamma=\frac{\kappa\,Re_K}{\sqrt{\beta_B}},\qquad
+\Rop=\begin{cases}R_1+2\kappa Re_K/\sqrt{\beta_B}&\text{frozen damping}\\ R+2\kappa Re_K/\sqrt{\beta_B}&\text{consistent}\end{cases}\ }
+\end{equation}
+(the slip responds linearly to the wall stress, $\delta u_s^+/\delta S=Re_K/\sqrt{\beta_B}$, hence the factor 2 in $\Rop$). So $\alpha_p=\alpha+\kappa Re_K/\sqrt{\beta_B}$ (frozen) or $1+\kappa Re_K/\sqrt{\beta_B}$ (consistent), and the friction law becomes
+\begin{equation}
+\frac{1}{\sqrt{C_f}}=\frac{1}{\sqrt{C_{f,\rm smooth}}}+\frac{Re_K}{\sqrt{\beta_B}},\qquad Re_K=\frac{\sqrt{K\,gh\sin\theta}}{\nu}.
+\end{equation}
+\emph{Interpretation.} With no turbulence in the bed, permeability only produces slip: the flow is faster and \emph{less} resistive than over a smooth wall. This is the macroscopic Beavers--Joseph picture and it is the right answer only for $Re_K\ll1$. The order-0 profile inside the bed is $u_s e^{z/\delta_B}$, on top of RCV's inner profile above.
+
+\subsection{Diffuse interface (DANS)}
+With the full porosity profile (quintic smooth step from $n_b$ at $z=-d_p$ to $1$ at the crest $z=0$), $\ell_t=0$ wherever $n<1$ and RCV's damped mixing length above the crest, \eqref{eq:innerP} is solved by shooting from the bulk bed (decaying Brinkman mode) up to $z^+=2\times10^5$, adjusting the amplitude so that $S=1$. Figure~\ref{fig:Rp}(a) and table~\ref{tab:Rp} show that $\Rp$ grows quickly with $d^+$: the whole roughness layer is laminar and nearly drag-free near the crest, where $(1-n)^2$ is small. The null-Reynolds-stress model is therefore only usable for $d^+\lesssim10$, i.e.\ $Re_K\lesssim0.3$; beyond that turbulence must penetrate, which is Step~3.
+
+%==========================================================
+\section{Step 3: Li \& Sawamoto mixing length}\label{sec:LS}
+%==========================================================
+Following RA (2.11)--(2.12),
+\begin{equation}
+\ell_t=\kappa Z_{LS}\Big[1-\exp\Big(-\frac{\sqrt{Z_{LS}U/\nu}}{A^*}\Big)\Big],\qquad Z_{LS}(z)=\int_{-\infty}^z\frac{n-n_b}{1-n_b}\,\dd z,\qquad A^*=26 .
+\end{equation}
+Three properties matter for the asymptotics.
+\begin{enumerate}[nosep]
+\item Above the roughness layer $Z_{LS}=z-z_d$ with $z_d$ inside the roughness layer (for my porosity profile, $z_d=-d_p/2$). The log law is in $Z_{LS}$, and by point (iii) of §\ref{sec:gen} the choice of origin is immaterial in the overlap.
+\item Turbulence switches on continuously through the roughness layer; $\ell_t\to0$ in the bulk bed, where the decaying Brinkman mode is still the deep-bed solution.
+\item The damping depends on the local velocity, not on $u_*$. So there is no ambiguity in linearising: the consistent value $\Rop=\Rp+\gamma$ is the natural one. Near a smooth wall $U^+\simeq Z^+$, and the damping reduces to Van Driest's.
+\end{enumerate}
+The inner problem is \eqref{eq:innerP} with $\nu_d=0$. Results are in figure~\ref{fig:Rp} and table~\ref{tab:Rp}:
+\begin{itemize}[nosep]
+\item $d^+\to0$: $\Rp\to3.46$ ($B\simeq7.2$), not RCV's $2.67$, because $\sqrt{Z^+U^+}<Z^+$ in the buffer layer damps more. For continuity with RCV one would recalibrate $A^*$ (not done here).
+\item $d^+\gtrsim10^4$: fully rough, $\Rp\simeq3.87-\ln d^+$ and $\gamma\to-1$. In the form $u^+=\kappa^{-1}\ln(z/d_p)+B_d$, $B_d\to8.2$; against Nikuradse's $8.5$ this is an equivalent sand roughness $k_s\simeq1.1\,d_p$.
+\item The relaxation coefficient $\alpha_p=1+\gamma$ goes from $1$ (smooth) through a minimum $\simeq-0.65$ near $d^+\approx100$ back to $0$ (fully rough). With frozen damping it goes from $3.3$ to $0$. Both agree in the fully rough limit, where damping is irrelevant. There $\alpha_1=-\alpha_2$, so the relaxation terms of \eqref{eq:mom} keep only their $\alpha_2$ (outer-layer) contributions.
+\end{itemize}
+
+%==========================================================
+\section{Step 4: adding the dispersive stress}\label{sec:disp}
+%==========================================================
+With RA's closure (2.13)--(2.15), $\nu_d^+=\lambda_d\,d^+\,(1-n)/(1-n_b)\,|u^+|$ is added to the molecular viscosity in \eqref{eq:innerP}. It is zero above the crest, so the outer layer and the matching are untouched. Three remarks:
+\begin{itemize}[nosep]
+\item $\nu_d$ depends on $U$, not on $\partial_zU$. The order-1 inner problem therefore picks up a term $\propto\delta U\,\partial_zU_0$, but the vector closure $\nu_d\propto|\bU|$ is isotropic, so the parallel/normal split still holds.
+\item Dispersion enhances momentum transfer in the roughness layer where the mixing length is small, so the bed is slightly rougher: $\Rp$ drops by $0.1$--$0.15$ for $d^+\gtrsim100$, i.e.\ $k_s\simeq1.25\,d_p$ instead of $1.1\,d_p$. $\gamma$ and $\alpha_p$ are almost unchanged.
+\item RA's alternative (their eq.~5.1), a combined length $\ell_{t,D}=(\ell_{t,\mu}^2+\ell_d^2)^{1/2}$ inside Prandtl's formula, makes the dispersive contribution $\propto|\partial_zU|\partial_zU$ instead of $U\partial_zU$. It changes only the inner ODE, not the framework.
+\end{itemize}
+With $\lambda_d=0.015$ the effect on the depth-averaged model is small \emph{in the large-submergence limit}. In RA's shallow-submergence experiments it was much larger because the roughness layer occupied a finite fraction of the depth (see the validity box in §\ref{sec:gen}).
+
+\begin{figure}[t]
+\centering\includegraphics[width=\linewidth]{fig_Rp.pdf}
+\caption{(a) Inner constant $\Rp$ versus $d^+$. Step~2: diffuse interface (DANS, $\ell_t=0$ for $n<1$) and sharp-interface closed form ($\beta_B=1$). Steps~3--4: Li \& Sawamoto mixing length without and with dispersive stress. Dotted line: fully rough asymptote. (b) $\alpha_p=\Rop-\Rp+1$ for steps~3--4, consistent linearisation (solid) and frozen damping (dashed). $n_b=0.4$, $\kappa=0.41$, $A^+=A^*=26$, $\lambda_d=0.015$, roughness layer of thickness $d_p$.}
+\label{fig:Rp}
+\end{figure}
+
+\begin{table}[t]\centering\small
+\caption{Inner constants. $B_p=(\Rp-1+2\ln2+\ln\kappa)/\kappa$; $\alpha_p^{c}=1+\gamma$ (consistent), $\alpha_p^{f}$ frozen damping. Smooth wall (RCV): $R=2.669$, $B=5.28$, $\alpha=3.155$ (frozen), $1$ (consistent).}
+\label{tab:Rp}
+\begin{tabular}{llrrrrr}
+\toprule
+Model & $d^+$ & $\Rp$ & $B_p$ & $\gamma$ & $\alpha_p^{c}$ & $\alpha_p^{f}$\\
+\midrule
+Step 2 (DANS) & 1 & 2.872 & 5.77 & 0.23 & 1.23 & 3.36\\
+ & 10 & 4.547 & 9.86 & 1.64 & 2.64 & 4.80\\
+ & 100 & 12.91 & 30.3 & 6.89 & 7.89 & 10.0\\
+\midrule
+Step 3 (L\&S) & 1 & 3.463 & 7.21 & 0.00 & 1.00 & 3.30\\
+ & 10 & 3.349 & 6.94 & $-0.27$ & 0.73 & 2.95\\
+ & 100 & 0.806 & 0.73 & $-1.64$ & $-0.64$ & 0.44\\
+ & $10^3$ & $-2.662$ & $-7.72$ & $-1.30$ & $-0.30$ & 0.03\\
+ & $10^4$ & $-5.306$ & $-14.2$ & $-1.05$ & $-0.05$ & 0.00\\
+\midrule
+Step 4 (+ disp.) & 1 & 3.463 & 7.21 & 0.00 & 1.00 & 3.30\\
+ & 10 & 3.331 & 6.89 & $-0.31$ & 0.69 & 2.90\\
+ & 100 & 0.650 & 0.35 & $-1.66$ & $-0.66$ & 0.39\\
+ & $10^3$ & $-2.797$ & $-8.05$ & $-1.28$ & $-0.28$ & 0.03\\
+ & $10^4$ & $-5.415$ & $-14.4$ & $-1.04$ & $-0.04$ & 0.00\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%==========================================================
+\section{Validation against a full-depth solver}\label{sec:valid}
+%==========================================================
+The asymptotic results were checked against an independent full-depth model: the steady 1-D DANS momentum balance $0=n\rho gi+n\bar f+(\tau_v+\tau_t+\tau_d)'-\rho\nu n'u'$ on $[z_0,z_1]$. It uses $u=U_{\rm SSL}$ at the bottom and a stress-free surface, a $\tanh$ porosity profile ($n_b=0.38$, transition over one $d_p$), the Li--Sawamoto depth $Z=\mathrm{softplus}(az)/a$, velocity-based damping, Ergun drag in the $\mu n/K$ form and RA's dispersive stress. The closure functions were taken unchanged from the supplied FEniCSx script. The weak form was solved with P1 elements and Newton's method in NumPy, because FEniCSx is not available here. Its mixing length has no free-surface factor, so the outer profile is $u=(u_*/\kappa)[\ln Z^++f(s)]+u_*B_p$ with $f(s)=2\sqrt{1-s}-2\ln(1+\sqrt{1-s})-2+2\ln2$. The inner problem \eqref{eq:innerP} was solved with the same closures, and $B_p$ was compared with $u/u_*-\kappa^{-1}[\ln Z^++f(s)]$ from the full model in the overlap. The predicted mean velocity is $U/u_*=\kappa^{-1}[\ln(hu_*/\nu)-1+\int_0^1f\,\dd s]+B_p$.
+
+\begin{table}[h]\centering\small
+\begin{tabular}{rrrrrr}
+\toprule
+$d^+$ & $h/d_p$ & $B_p$ (inner) & $B_p$ (full model, overlap) & $U/u_*$ (full) & $U/u_*$ (asymptotic)\\
+\midrule
+10 & $10^3$ & 6.872 & 6.816 ($Z=30d_p$) & 26.183 & 26.213\\
+10 & $10^4$ & 6.871 & 6.871 ($Z=100d_p$) & 31.824 & 31.829\\
+100 & $10^2$ & 0.233 & -- & 19.544 & 19.574\\
+100 & $10^4$ & 0.232 & 0.232 ($Z=100d_p$) & 30.804 & 30.806\\
+1000 & $10^2$ & $-8.000$ & -- & 16.958 & 16.956\\
+1000 & $10^4$ & $-8.001$ & $-8.002$ ($Z=100d_p$) & 28.187 & 28.188\\
+\bottomrule
+\end{tabular}
+\caption{Inner constant and mean velocity: matched asymptotics versus full-depth solution.}\label{tab:valid}
+\end{table}
+
+\begin{table}[h]\centering\small
+\begin{tabular}{rrrrr}
+\toprule
+$h/d_p$ & 3.75 (reference case) & 10 & 30 & 100\\
+\midrule
+error on $U$ & $+4.9\%$ & $+1.6\%$ & $+0.43\%$ & $+0.11\%$\\
+\bottomrule
+\end{tabular}
+\caption{Decreasing submergence at fixed $d^+\simeq139$: relative error of the asymptotic mean velocity.}\label{tab:shallow}
+\end{table}
+
+The inner constant is recovered to 3--4 digits once a genuine overlap exists, and the full solution stays within $0.2\%\,u_*$ of the composite asymptotic profile. Because $B_p(d^+)$ matches across $d^+$, its slope $\gamma$, and hence the consistent $\alpha_p=1+\gamma$, are confirmed as well. The frozen-damping alternative and the order-1 terms concern unsteady, non-uniform flows and cannot be tested with a steady 1-D solver.
+
+%==========================================================
+\section{Summary}
+%==========================================================
+\begin{enumerate}[nosep]
+\item RCV's chain: outer log layer (the $(1-s)$ free-surface factor cancels the linear stress) $\to$ viscous inner layer with constant stress $\to$ matching at $s\sim\sqrt\eta$ $\to$ $\mu=2/\ln(\kappa^2Re)$ $\to$ order 1 as a linear response to the wall stress $\to$ depth averaging with an enstrophy tensor $\to$ elimination giving relaxation source terms. The constants are $R$ (secant response) and $R_1$ (tangent response).
+\item A thin permeable rough bed changes only the inner problem: the drag is $O(1)$ there, while gravity, unsteadiness and the subsurface flux are $O(\eta)$. The model keeps RCV's form with $R\to\Rp(d^+)$, $R_1\to\Rop(d^+)$ and an explicit friction law \eqref{eq:Cfp}. The $h$-dependence of $\Rp$ modifies the outer $T_1,T_2$ through $q_1=\tfrac32+\tfrac\gamma2$, but not the coefficients at the order that is fixed.
+\item Null Reynolds stress in the bed gives slip and \emph{lower} resistance ($1/\sqrt{C_f}$ increased by $Re_K/\sqrt{\beta_B}$ for a sharp interface). It is only valid for $Re_K\ll1$.
+\item The Li \& Sawamoto length gives a smooth-to-fully-rough transition with $k_s\simeq1.1\,d_p$, $\gamma\to-1$ and $\alpha_p\to0$. The dispersive stress adds a small extra resistance ($k_s\simeq1.25\,d_p$).
+\item A full-depth DANS solver reproduces $B_p$ and the mean velocity to $10^{-3}$ at large submergence, and to 5\% even at $h/d_p=3.75$.
+\item Open choice: frozen versus consistent linearisation of the damping changes $\alpha_p$ substantially for $d^+\lesssim10^3$.
+\end{enumerate}
+
+\paragraph{Reproducibility.} Symbolic checks (sympy): order-1 outer stress for general $Q(h)$; $U_1$, $\varphi^{(1)}$; elimination for $c_1,c_2$; dissipation-tensor elimination for $e_1,e_2$. Numerics (scipy, LSODA, shooting): smooth-wall check $R=2.6689$ and $R_1=4.8237$; inner problems of Steps~2--4 for $1\le d^+\le10^5$; the identity $\Rop=\Rp+\gamma$ was checked against the linearised ODE.
+
+\end{document}
